@@ -95,7 +95,7 @@
         </button>
     </div>
 
-    <!-- MANDATORY TELEGRAM CHANNEL JOIN MODAL (POPUP GATE) -->
+    <!-- MANDATORY TELEGRAM CHANNEL JOIN MODAL -->
     <div id="channel-gate-modal" class="fixed inset-0 z-45 flex items-center justify-center bg-slate-900/80 backdrop-blur-md hidden px-4">
         <div class="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl border border-pink-100 flex flex-col max-h-[92vh]">
             <div class="text-center mb-3">
@@ -121,6 +121,98 @@
                 <p class="text-[10px] text-center text-slate-400">
                     সব চ্যানেল সবুজ টিক চিহ্ন সম্পন্ন হলে ড্যাশবোর্ড আনলক হবে।
                 </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. INITIAL ACTIVATION REMINDER POPUP (FIRST VISIT) -->
+    <div id="activation-reminder-modal" class="fixed inset-0 z-40 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden px-5">
+        <div class="bg-white rounded-[2rem] max-w-sm w-full p-6 shadow-2xl border border-pink-100 text-center animate-bounce-short">
+            <div class="w-16 h-16 bg-pink-50 text-[#e2136e] rounded-2xl flex items-center justify-center mx-auto mb-3 text-3xl shadow-inner border border-pink-100">
+                <i class="fa-solid fa-shield-heart"></i>
+            </div>
+            <h3 class="text-base font-black text-slate-800">অ্যাকাউন্ট অ্যাক্টিভেশন আবশ্যক</h3>
+            <p class="text-slate-600 text-xs mt-2 leading-relaxed font-medium">
+                আপনার অ্যাকাউন্টটি এখনও সক্রিয় করা হয়নি। প্রতিদিন বিজ্ঞাপন দেখে ও টাস্ক করে নিশ্চিত আয় করতে এবং টাকা তুলতে এখনই আপনার আইডি সক্রিয় করুন।
+            </p>
+            <div class="mt-2 bg-pink-50/80 p-3 rounded-xl border border-pink-100">
+                <span class="text-[11px] text-slate-500 font-bold block">অ্যাক্টিভেশন ফি:</span>
+                <span class="text-lg font-black text-[#e2136e] font-inter">৳ <span class="activation-fee-text">100.00</span></span>
+            </div>
+            <div class="mt-5 space-y-2">
+                <button onclick="openActivationModal(); closeActivationReminderModal();" class="w-full bg-[#e2136e] text-white font-bold py-3.5 rounded-xl btn-press shadow-md text-xs flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-bolt"></i> এখনই আইডি অ্যাক্টিভ করুন
+                </button>
+                <button onclick="closeActivationReminderModal()" class="w-full bg-slate-100 text-slate-600 font-bold py-2.5 rounded-xl btn-press text-xs">
+                    পরে করব (অ্যাপ ঘুরে দেখুন)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. FULL ACCOUNT ACTIVATION (DEPOSIT) MODAL -->
+    <div id="activation-flow-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-md hidden px-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl border border-pink-100 flex flex-col max-h-[94vh]">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-pink-50 text-[#e2136e] flex items-center justify-center text-sm font-bold">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-sm text-slate-800">আইডি অ্যাক্টিভেশন</h3>
+                        <p class="text-[10px] text-slate-400">অ্যাকাউন্ট ভেরিফিকেশন ও ডিপোজিট</p>
+                    </div>
+                </div>
+                <button onclick="closeActivationModal()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="overflow-y-auto space-y-3.5 flex-1 pr-1">
+                <!-- Payment Method Toggle -->
+                <div>
+                    <label class="text-[11px] font-bold text-slate-700 block mb-1.5">পেমেন্ট মেথড নির্বাচন করুন</label>
+                    <div class="grid grid-cols-2 gap-2" id="activation-gateways-container">
+                        <!-- Rendered dynamically (bKash & Nagad) -->
+                    </div>
+                </div>
+
+                <!-- Admin Payee Number Card with Instant Copy -->
+                <div class="bg-gradient-to-r from-pink-50 to-rose-50 p-3.5 rounded-2xl border border-pink-200">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide" id="active-method-instruction">বিকাশ পার্সোনাল ক্যাশআউট/সেন্ডমানি</span>
+                        <span class="text-[10px] bg-pink-600 text-white font-bold px-2 py-0.5 rounded-full">ফি: ৳<span class="activation-fee-text">100</span></span>
+                    </div>
+                    <div class="flex items-center justify-between bg-white p-2.5 rounded-xl border border-pink-200 shadow-xs mt-1">
+                        <span class="font-black text-slate-800 text-sm font-inter tracking-wider" id="activation-admin-number">লোড হচ্ছে...</span>
+                        <button onclick="copyAdminNumber()" class="bg-[#e2136e] text-white text-[10px] font-bold px-3 py-1.5 rounded-lg btn-press flex items-center gap-1">
+                            <i class="fa-regular fa-copy"></i> কপি
+                        </button>
+                    </div>
+                    <p class="text-[10px] text-slate-500 mt-2 leading-relaxed">
+                        ⚠️ উপরের নাম্বারে <b class="text-[#e2136e]">৳<span class="activation-fee-text">100</span></b> সেন্ড মানি করুন। এরপর নিচের ফর্মে আপনার নাম্বার ও TrxID লিখে সাবমিট করুন।
+                    </p>
+                </div>
+
+                <!-- Form Fields -->
+                <form onsubmit="submitActivationRequest(event)" class="space-y-3">
+                    <div>
+                        <label class="text-[11px] font-bold text-slate-700 block mb-1">যে নাম্বার থেকে টাকা পাঠিয়েছেন (Sender Number)</label>
+                        <input type="tel" id="sender-number-input" placeholder="01XXXXXXXXX" required
+                            class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs font-inter focus:outline-none focus:border-[#e2136e] focus:bg-white font-bold">
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-slate-700 block mb-1">ট্রানজেকশন আইডি (Transaction ID / TrxID)</label>
+                        <input type="text" id="sender-trx-input" placeholder="যেমন: BL98X710PQ" required
+                            class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs font-mono uppercase focus:outline-none focus:border-[#e2136e] focus:bg-white font-bold">
+                    </div>
+
+                    <div id="activation-status-banner" class="hidden p-3 rounded-xl border text-[11px] font-bold"></div>
+
+                    <button type="submit" id="submit-activation-btn" class="w-full bg-[#e2136e] text-white font-bold py-3.5 rounded-xl shadow-md btn-press text-xs flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> রিকোয়েস্ট নিশ্চিত করুন
+                    </button>
+                </form>
             </div>
         </div>
     </div>
@@ -152,22 +244,44 @@
     <div class="w-full max-w-md h-full bg-[#fffbfd] relative shadow-2xl flex flex-col hidden" id="app-container">
         
         <!-- Header -->
-        <div class="glass px-5 py-3.5 flex items-center justify-between z-20 absolute top-0 w-full rounded-b-3xl border-b border-pink-100/60 shadow-sm">
+        <div class="glass px-5 py-3 flex items-center justify-between z-20 absolute top-0 w-full rounded-b-3xl border-b border-pink-100/60 shadow-sm">
             <div class="flex items-center gap-3">
                 <img id="user-avatar" src="https://placehold.co/100" class="w-10 h-10 rounded-full object-cover border-2 border-[#e2136e]">
                 <div>
-                    <h1 class="font-bold text-slate-800 text-sm" id="header-username">ব্যবহারকারী</h1>
+                    <div class="flex items-center gap-1.5">
+                        <h1 class="font-bold text-slate-800 text-sm" id="header-username">ব্যবহারকারী</h1>
+                        <span id="header-status-badge" class="text-[9px] px-2 py-0.5 rounded-full font-bold cursor-pointer" onclick="openActivationModal()">
+                            যাচাই হচ্ছে...
+                        </span>
+                    </div>
                     <p class="text-[12px] text-[#e2136e] font-black font-inter">৳ <span id="header-balance">0.00</span></p>
                 </div>
             </div>
-            <span class="text-[10px] bg-pink-50 text-[#e2136e] border border-pink-200 px-3 py-1 rounded-full font-bold">
-                BD INCOME
-            </span>
+            <button onclick="openActivationModal()" class="text-[10px] bg-pink-50 hover:bg-pink-100 text-[#e2136e] border border-pink-200 px-3 py-1.5 rounded-full font-bold flex items-center gap-1 shadow-xs">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span id="quick-activate-btn-text">আইডি অ্যাক্টিভ</span>
+            </button>
         </div>
 
         <!-- Scrollable Body -->
         <div class="flex-1 overflow-y-auto pt-20 pb-24 scroll-smooth" id="main-content">
             
+            <!-- Inactive Warning Card on Top of Home -->
+            <div id="home-activation-alert-banner" class="mx-5 mb-2 mt-1 p-3.5 bg-amber-50 rounded-2xl border border-amber-200 flex items-center justify-between shadow-xs hidden">
+                <div class="flex items-center gap-2.5 overflow-hidden">
+                    <div class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center text-sm shrink-0">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-black text-amber-900 leading-tight">অ্যাকাউন্ট নিষ্ক্রিয়!</h4>
+                        <p class="text-[10px] text-amber-700 leading-tight">কাজ শুরু করতে অ্যাক্টিভেশন আবশ্যক</p>
+                    </div>
+                </div>
+                <button onclick="openActivationModal()" class="bg-amber-600 hover:bg-amber-700 text-white text-[10px] font-black px-3 py-2 rounded-xl btn-press shrink-0 shadow-sm">
+                    অ্যাক্টিভ করুন
+                </button>
+            </div>
+
             <!-- 1. HOME VIEW -->
             <div id="view-home" class="p-5 space-y-4">
                 <!-- User Balance Card -->
@@ -178,10 +292,10 @@
                     </div>
                     <h1 class="text-3xl font-black mb-4 font-inter">৳ <span id="home-balance">0.00</span></h1>
                     <div class="flex gap-2">
-                        <button onclick="switchTab('tasks')" class="flex-1 bg-white text-[#e2136e] py-2.5 rounded-xl font-bold text-xs shadow btn-press flex items-center justify-center gap-1.5">
+                        <button onclick="guardedSwitchTab('tasks')" class="flex-1 bg-white text-[#e2136e] py-2.5 rounded-xl font-bold text-xs shadow btn-press flex items-center justify-center gap-1.5">
                             <i class="fa-solid fa-play"></i> কাজ করুন
                         </button>
-                        <button onclick="switchTab('wallet')" class="flex-1 bg-black/20 text-white border border-white/30 py-2.5 rounded-xl font-bold text-xs btn-press flex items-center justify-center gap-1.5">
+                        <button onclick="guardedSwitchTab('wallet')" class="flex-1 bg-black/20 text-white border border-white/30 py-2.5 rounded-xl font-bold text-xs btn-press flex items-center justify-center gap-1.5">
                             <i class="fa-solid fa-money-bill-transfer"></i> উত্তোলন
                         </button>
                     </div>
@@ -214,13 +328,13 @@
                     <div class="flex justify-between items-center">
                         <div>
                             <h3 class="font-bold text-xs text-slate-800">বন্ধুদের রেফার করুন</h3>
-                            <p class="text-[10px] text-slate-500">প্রতি সফল রেফারে বোনাস ৳ <span id="ref-bonus-display" class="font-bold text-[#e2136e]">0</span></p>
+                            <p class="text-[10px] text-slate-500">প্রতি সফল অ্যাক্টিভেটেড রেফারে বোনাস ৳ <span id="ref-bonus-display" class="font-bold text-[#e2136e]">0</span></p>
                         </div>
                         <div class="w-8 h-8 rounded-full bg-pink-50 text-[#e2136e] flex items-center justify-center text-xs font-bold font-inter" id="stat-referrals">0</div>
                     </div>
                     <div class="bg-slate-50 p-1.5 rounded-xl border border-slate-200 flex items-center gap-2">
                         <p class="text-[10px] text-slate-500 truncate flex-1 font-inter pl-2" id="home-ref-link">লোড হচ্ছে...</p>
-                        <button onclick="copyRefLink()" class="bg-[#e2136e] text-white text-[10px] px-3.5 py-2 rounded-lg font-bold btn-press shadow">কপি লিংক</button>
+                        <button onclick="guardedCopyRefLink()" class="bg-[#e2136e] text-white text-[10px] px-3.5 py-2 rounded-lg font-bold btn-press shadow">কপি লিংক</button>
                     </div>
                 </div>
             </div>
@@ -277,7 +391,7 @@
                             <span class="text-[10px] text-pink-600 font-bold bg-pink-50 px-2 py-0.5 rounded-full" id="charge-label">সার্ভিস ফি: ১০%</span>
                         </div>
                         
-                        <!-- Native Vector bKash & Nagad Gateways -->
+                        <!-- Real Vector bKash & Nagad Gateways -->
                         <div id="gateways-grid" class="grid grid-cols-2 gap-2.5"></div>
                         <input type="hidden" id="selected-payment-method" value="বিকাশ">
                     </div>
@@ -312,10 +426,17 @@
 
             <!-- 4. PROFILE VIEW -->
             <div id="view-profile" class="p-5 space-y-4 hidden">
-                <div class="glass rounded-3xl p-5 text-center border border-pink-100 shadow-sm">
+                <div class="glass rounded-3xl p-5 text-center border border-pink-100 shadow-sm relative">
                     <img id="profile-img" src="https://placehold.co/100" class="w-20 h-20 rounded-full mx-auto p-1 border-2 border-[#e2136e] object-cover mb-2">
                     <h2 class="font-black text-base text-slate-800" id="profile-user-name">ব্যবহারকারী</h2>
                     <p class="text-[10px] text-slate-500 font-inter">User ID: <span id="profile-user-id">...</span></p>
+
+                    <!-- Account Status Card inside Profile -->
+                    <div class="mt-3 inline-block">
+                        <div id="profile-activation-badge" class="px-4 py-1.5 rounded-full text-xs font-black inline-flex items-center gap-1.5 shadow-xs cursor-pointer" onclick="openActivationModal()">
+                            লোড হচ্ছে...
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Profile Statistics -->
@@ -354,11 +475,11 @@
                 <div class="nav-icon w-8 h-8 rounded-xl flex items-center justify-center transition-all"><i class="fa-solid fa-house text-sm"></i></div>
                 <span class="text-[9px] font-bold">হোম</span>
             </button>
-            <button onclick="switchTab('tasks')" class="nav-item text-slate-400 flex flex-col items-center gap-1 transition-all" data-target="tasks">
+            <button onclick="guardedSwitchTab('tasks')" class="nav-item text-slate-400 flex flex-col items-center gap-1 transition-all" data-target="tasks">
                 <div class="nav-icon w-8 h-8 rounded-xl flex items-center justify-center transition-all"><i class="fa-solid fa-list-check text-sm"></i></div>
                 <span class="text-[9px] font-bold">কাজ</span>
             </button>
-            <button onclick="switchTab('wallet')" class="nav-item text-slate-400 flex flex-col items-center gap-1 transition-all" data-target="wallet">
+            <button onclick="guardedSwitchTab('wallet')" class="nav-item text-slate-400 flex flex-col items-center gap-1 transition-all" data-target="wallet">
                 <div class="nav-icon w-8 h-8 rounded-xl flex items-center justify-center transition-all"><i class="fa-solid fa-wallet text-sm"></i></div>
                 <span class="text-[9px] font-bold">ওয়ালেট</span>
             </button>
@@ -377,11 +498,10 @@
 
     <!-- CORE SCRIPT ENGINE -->
     <script>
-        // Updated Telegram Bot Config
         const BOT_USERNAME = "Bd_Incom_e_Bot";
         const BOT_APP_NAME = "app"; 
 
-        // New Firebase Configuration
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBDeeRAGoprwyOj9RzmcDDu2JEoII6Hn_I",
             authDomain: "whaledrop-2f9ce.firebaseapp.com",
@@ -396,23 +516,22 @@
         const db = firebase.firestore();
         const tg = window.Telegram?.WebApp;
 
-        // ORIGINAL VECTOR SVGS
+        // AUTHENTIC VECTOR LOGOS
         const BKASH_SVG = `<svg class="h-6 w-auto" viewBox="0 0 160 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M72.2 24.8L61.7 42.6H49.1L59.6 24.8H72.2Z" fill="#E2136E"/>
-            <path d="M59.4 6.7L48.9 24.5H36.3L46.8 6.7H59.4Z" fill="#E2136E"/>
-            <path d="M46.7 24.8L36.2 42.6H23.6L34.1 24.8H46.7Z" fill="#E2136E"/>
-            <path d="M33.9 6.7L23.4 24.5H10.8L21.3 6.7H33.9Z" fill="#E2136E"/>
-            <path d="M85.4 12.6C89.5 12.6 92.4 15.3 92.4 19.3C92.4 23.3 89.5 26 85.4 26H79.8V12.6H85.4ZM85.4 7.2H74.2V42.6H79.8V31.3H85.4C92.9 31.3 98.1 26.2 98.1 19.3C98.1 12.3 92.9 7.2 85.4 7.2Z" fill="#E2136E"/>
-            <text x="100" y="32" font-family="'Inter', sans-serif" font-weight="900" font-size="24" fill="#E2136E">bKash</text>
+            <path d="M42.5 10L15 26.5L34 45L42.5 10Z" fill="#E2136E"/>
+            <path d="M15 26.5L4 20L21 9L15 26.5Z" fill="#C20F5D"/>
+            <path d="M42.5 10L52 2L21 9L42.5 10Z" fill="#E2136E"/>
+            <path d="M34 45L45 52L42.5 10L34 45Z" fill="#9C0A49"/>
+            <text x="58" y="36" font-family="'Inter', sans-serif" font-weight="900" font-size="28" fill="#E2136E">bKash</text>
         </svg>`;
 
         const NAGAD_SVG = `<svg class="h-6 w-auto" viewBox="0 0 160 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="28" cy="28" r="20" fill="#F7931E"/>
-            <path d="M28 12C20 12 15 20 20 28C24 34 32 30 32 25C32 21 29 19 26 21C24 22 23 24 23 25" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round"/>
-            <text x="56" y="35" font-family="'Hind Siliguri', sans-serif" font-weight="800" font-size="26" fill="#F7931E">নগদ</text>
+            <circle cx="28" cy="28" r="21" fill="#F7931E"/>
+            <path d="M28 14C21 14 17 21 21 28C24.5 34 32.5 30 32.5 25C32.5 21 29 19.5 26 21.5" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
+            <text x="58" y="37" font-family="'Hind Siliguri', sans-serif" font-weight="800" font-size="28" fill="#F7931E">নগদ</text>
         </svg>`;
 
-        // Global State Controlled via Firebase Admin
+        // Global Settings
         let appSettings = {
             botToken: "", 
             adReward: 0.50,
@@ -420,28 +539,34 @@
             referralBonus: 5.00,
             minWithdraw: 50,
             withdrawFeePercent: 10,
+            activationFee: 100,
+            adminBkashNumber: "018XXXXXXXX",
+            adminNagadNumber: "017XXXXXXXX",
             helpLink: "https://t.me/",
             guideVideoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-            howToEarnText: "১. প্রতিদিন অ্যাড দেখে ইনকাম করুন।\n২. সহজ টাস্কগুলো সম্পন্ন করুন।\n৩. বন্ধুদের রেফার করে আনলিমিটেড বোনাস নিন।",
+            howToEarnText: "১. অ্যাকাউন্ট অ্যাক্টিভ করে আনলিমিটেড ইনকাম শুরু করুন।\n২. প্রতিদিন অ্যাড ও টাস্ক সম্পন্ন করুন।\n৩. বন্ধুদের রেফার করে নিশ্চিত ক্যাশ নিন।",
             adLink: "",
             monetagZoneId: "10487556",
             requiredChannels: [
                 { id: "1", username: "@channel1", name: "অফিসিয়াল টেলিগ্রাম চ্যানেল", link: "https://t.me/" },
-                { id: "2", username: "@channel2", name: "পেমেন্ট প্রুফ চ্যানেল", link: "https://t.me/" },
-                { id: "3", username: "@channel3", name: "ডেইলি সাপোর্ট গ্রুপ", link: "https://t.me/" }
+                { id: "2", username: "@channel2", name: "পেমেন্ট প্রুফ চ্যানেল", link: "https://t.me/" }
             ]
         };
 
         let channelVerificationStatus = {};
 
-        let activePaymentGateways = [
-            { id: "bkash", name: "বিকাশ", placeholder: "বিকাশ পার্সোনাল নাম্বার", svg: BKASH_SVG },
-            { id: "nagad", name: "নগদ", placeholder: "নগদ পার্সোনাল নাম্বার", svg: NAGAD_SVG }
+        const activePaymentGateways = [
+            { id: "bkash", name: "বিকাশ", placeholder: "বিকাশ পার্সোনাল নাম্বার", svg: BKASH_SVG, type: "adminBkashNumber" },
+            { id: "nagad", name: "নগদ", placeholder: "নগদ পার্সোনাল নাম্বার", svg: NAGAD_SVG, type: "adminNagadNumber" }
         ];
 
+        let selectedActivationGateway = "বিকাশ";
         let tasksList = [];
         let currentUser = null;
-        let userData = {};
+        let userData = {
+            isActivated: false,
+            activationStatus: 'unpaid' // 'unpaid', 'pending', 'approved', 'rejected'
+        };
         
         let isAdWatching = false;
         let adWatchTimer = null;
@@ -451,13 +576,9 @@
         function getEmbedUrl(url) {
             if(!url) return "";
             let videoId = "";
-            if(url.includes("youtu.be/")) {
-                videoId = url.split("youtu.be/")[1].split("?")[0];
-            } else if(url.includes("watch?v=")) {
-                videoId = url.split("watch?v=")[1].split("&")[0];
-            } else if(url.includes("embed/")) {
-                return url;
-            }
+            if(url.includes("youtu.be/")) videoId = url.split("youtu.be/")[1].split("?")[0];
+            else if(url.includes("watch?v=")) videoId = url.split("watch?v=")[1].split("&")[0];
+            else if(url.includes("embed/")) return url;
             return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
         }
 
@@ -465,13 +586,11 @@
         function extractTelegramUser() {
             try {
                 if (tg?.initDataUnsafe?.user?.id) return tg.initDataUnsafe.user;
-
                 if (tg?.initData) {
                     const params = new URLSearchParams(tg.initData);
                     const userRaw = params.get('user');
                     if (userRaw) return JSON.parse(decodeURIComponent(userRaw));
                 }
-
                 const searchParams = new URLSearchParams(window.location.search);
                 const hashParams = new URLSearchParams(window.location.hash.substring(1));
                 const tgWebAppData = searchParams.get('tgWebAppData') || hashParams.get('tgWebAppData');
@@ -480,18 +599,14 @@
                     const userRaw = parsed.get('user');
                     if (userRaw) return JSON.parse(decodeURIComponent(userRaw));
                 }
-
                 const cachedUser = sessionStorage.getItem("tg_cached_user");
                 if (cachedUser) return JSON.parse(cachedUser);
-
             } catch (err) {
-                console.warn("Telegram data parse warn:", err);
+                console.warn(err);
             }
-
             if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.protocol === "file:") {
                 return { id: 77889900, first_name: "Tester", username: "bd_tester", photo_url: "" };
             }
-
             return null;
         }
 
@@ -528,16 +643,15 @@
 
             setupAntiCheat();
             renderGateways();
+            renderActivationGateways();
             await initAppEngine();
         });
 
         function updateMonetagSdk(zoneId) {
             if(!zoneId || currentMonetagZone === zoneId) return;
             currentMonetagZone = zoneId;
-
             const oldScript = document.getElementById('dynamic-monetag-script');
             if (oldScript) oldScript.remove();
-
             const script = document.createElement('script');
             script.id = 'dynamic-monetag-script';
             script.src = '//libtl.com/sdk.js';
@@ -593,28 +707,19 @@
         // TELEGRAM CHANNELS MANDATORY GATE SYSTEM
         // ==========================================
         async function checkChannelMemberStatus(channelUsernameOrId) {
-            if (!appSettings.botToken) {
-                return true;
-            }
-            if (window.location.hostname === "localhost" || window.location.protocol === "file:") {
-                return true; 
-            }
+            if (!appSettings.botToken) return true;
+            if (window.location.hostname === "localhost" || window.location.protocol === "file:") return true;
             try {
                 let chatId = channelUsernameOrId.trim();
-                if (!chatId.startsWith('-') && !chatId.startsWith('@')) {
-                    chatId = '@' + chatId;
-                }
+                if (!chatId.startsWith('-') && !chatId.startsWith('@')) chatId = '@' + chatId;
                 const url = `https://api.telegram.org/bot${appSettings.botToken}/getChatMember?chat_id=${encodeURIComponent(chatId)}&user_id=${currentUser.id}`;
                 const res = await fetch(url);
                 const data = await res.json();
-
                 if (data.ok && data.result) {
-                    const st = data.result.status;
-                    return ['creator', 'administrator', 'member', 'restricted'].includes(st);
+                    return ['creator', 'administrator', 'member', 'restricted'].includes(data.result.status);
                 }
                 return false;
             } catch(err) {
-                console.error("Check channel err:", err);
                 return false;
             }
         }
@@ -622,7 +727,6 @@
         function renderChannelGateItems() {
             const container = document.getElementById('mandatory-channel-list');
             container.innerHTML = '';
-
             const channels = appSettings.requiredChannels || [];
             channels.forEach((ch, idx) => {
                 const isJoined = channelVerificationStatus[ch.username] === true;
@@ -632,7 +736,6 @@
                 row.className = `p-3 rounded-2xl border transition-all flex items-center justify-between ${
                     isJoined ? 'bg-emerald-50/70 border-emerald-200' : (hasFailed ? 'bg-rose-50/70 border-rose-200' : 'bg-slate-50 border-slate-200')
                 }`;
-
                 row.innerHTML = `
                     <div class="flex items-center gap-2.5 overflow-hidden pr-2">
                         <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 ${
@@ -645,7 +748,6 @@
                             <p class="text-[10px] text-slate-400 font-inter truncate">${ch.username}</p>
                         </div>
                     </div>
-                    
                     <div>
                         ${isJoined ? `
                             <span class="text-[11px] font-bold text-emerald-600 bg-white border border-emerald-200 px-3 py-1.5 rounded-xl flex items-center gap-1 shadow-xs">
@@ -664,13 +766,9 @@
 
         function openChannelUrl(url) {
             triggerHaptic('medium');
-            if (tg && tg.openTelegramLink && url.includes('t.me/')) {
-                tg.openTelegramLink(url);
-            } else if (tg && tg.openLink) {
-                tg.openLink(url);
-            } else {
-                window.open(url, '_blank');
-            }
+            if (tg && tg.openTelegramLink && url.includes('t.me/')) tg.openTelegramLink(url);
+            else if (tg && tg.openLink) tg.openLink(url);
+            else window.open(url, '_blank');
         }
 
         async function verifyAllChannelsNow() {
@@ -698,7 +796,7 @@
                 showToast("সকল চ্যানেল সফলভাবে ভেরিফাই হয়েছে!", "success");
                 document.getElementById('channel-gate-modal').classList.add('hidden');
                 document.getElementById('app-container').classList.remove('hidden');
-                checkPopupNotice();
+                onAppUnlocked();
             } else {
                 triggerHaptic('error');
                 showToast("লাল ক্রস চিহ্নিত চ্যানেলে জয়েন করে পুনরায় চেষ্টা করুন", "error");
@@ -710,7 +808,7 @@
             if (!channels.length) {
                 document.getElementById('channel-gate-modal').classList.add('hidden');
                 document.getElementById('app-container').classList.remove('hidden');
-                checkPopupNotice();
+                onAppUnlocked();
                 return;
             }
 
@@ -724,12 +822,26 @@
             if (initialAllJoined) {
                 document.getElementById('channel-gate-modal').classList.add('hidden');
                 document.getElementById('app-container').classList.remove('hidden');
-                checkPopupNotice();
+                onAppUnlocked();
             } else {
                 renderChannelGateItems();
                 document.getElementById('channel-gate-modal').classList.remove('hidden');
                 document.getElementById('app-container').classList.add('hidden');
             }
+        }
+
+        function onAppUnlocked() {
+            // Check if user is not activated yet, show activation modal
+            if (!userData.isActivated && userData.activationStatus !== 'pending') {
+                document.getElementById('activation-reminder-modal').classList.remove('hidden');
+            } else {
+                checkPopupNotice();
+            }
+        }
+
+        function closeActivationReminderModal() {
+            document.getElementById('activation-reminder-modal').classList.add('hidden');
+            checkPopupNotice();
         }
 
         // ==========================================
@@ -772,12 +884,24 @@
 
                 uRef.onSnapshot(doc => {
                     if(doc.exists) {
-                        userData = doc.data();
+                        userData = { ...userData, ...doc.data() };
                         updateUserUI(userData);
                     }
                 });
 
-                // 4. User Withdraw History Listener
+                // 4. Real-time Activation Requests Listener for this user
+                db.collection('activations')
+                    .where('userId', '==', currentUser.id.toString())
+                    .orderBy('createdAt', 'desc')
+                    .limit(1)
+                    .onSnapshot(snap => {
+                        if (!snap.empty) {
+                            const act = snap.docs[0].data();
+                            handleUserActivationStatusChange(act.status, act);
+                        }
+                    });
+
+                // 5. User Withdraw History Listener
                 db.collection('withdrawals')
                     .where('userId', '==', currentUser.id.toString())
                     .onSnapshot(snap => {
@@ -838,29 +962,12 @@
                 lastAdDate: new Date().toISOString().split('T')[0],
                 completedTasks: [],
                 referredBy: referrerId,
+                isActivated: false,
+                activationStatus: 'unpaid',
                 joinedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
-            await db.runTransaction(async (t) => {
-                let refDoc = null;
-                if (referrerId && referrerId !== currentUser.id.toString()) {
-                    refDoc = await t.get(db.collection('users').doc(referrerId));
-                }
-
-                t.set(uRef, initData);
-
-                if (refDoc && refDoc.exists) {
-                    const bonus = parseFloat(appSettings.referralBonus || 5);
-                    const rData = refDoc.data();
-                    t.update(refDoc.ref, {
-                        balance: (rData.balance || 0) + bonus,
-                        referralCount: (rData.referralCount || 0) + 1,
-                        totalIncome: (rData.totalIncome || 0) + bonus
-                    });
-
-                    sendBotMessage(referrerId, `🎉 <b>নতুন রেফারেল বোনাস!</b>\n\n👤 ইউজার: @${currentUser.username || currentUser.first_name}\n💰 বোনাস: ৳ ${bonus.toFixed(2)} যুক্ত হয়েছে!`);
-                }
-            });
+            await uRef.set(initData);
         }
 
         function checkDailyReset(ref, data) {
@@ -881,6 +988,12 @@
             document.getElementById('charge-label').innerText = `সার্ভিস ফি: ${appSettings.withdrawFeePercent}%`;
             document.getElementById('profile-support-btn').href = appSettings.helpLink || "#";
 
+            document.querySelectorAll('.activation-fee-text').forEach(el => {
+                el.innerText = parseFloat(appSettings.activationFee || 100).toFixed(2);
+            });
+
+            updateActivationAdminDetails();
+
             const iframe = document.getElementById('guide-video-frame');
             if(iframe && appSettings.guideVideoUrl) {
                 const embed = getEmbedUrl(appSettings.guideVideoUrl);
@@ -893,6 +1006,189 @@
             }
         }
 
+        // ==========================================
+        // ACTIVATION & GUARD ENGINE
+        // ==========================================
+        function handleUserActivationStatusChange(status, data) {
+            userData.activationStatus = status;
+            if (status === 'approved') {
+                userData.isActivated = true;
+            }
+            updateUserUI(userData);
+        }
+
+        function checkActivationGuard() {
+            if (userData.isActivated) {
+                return true;
+            }
+            triggerHaptic('error');
+            openActivationModal();
+            showToast("এই সুবিধা ব্যবহার করতে আগে আইডি অ্যাক্টিভ করুন!", "error");
+            return false;
+        }
+
+        function guardedSwitchTab(tabId) {
+            if (tabId === 'home' || tabId === 'profile') {
+                switchTab(tabId);
+                return;
+            }
+            if (checkActivationGuard()) {
+                switchTab(tabId);
+            }
+        }
+
+        function guardedCopyRefLink() {
+            if (checkActivationGuard()) {
+                copyRefLink();
+            }
+        }
+
+        function openActivationModal() {
+            triggerHaptic('medium');
+            const modal = document.getElementById('activation-flow-modal');
+            modal.classList.remove('hidden');
+            updateActivationAdminDetails();
+            renderActivationStatusBanner();
+        }
+
+        function closeActivationModal() {
+            document.getElementById('activation-flow-modal').classList.add('hidden');
+        }
+
+        function renderActivationGateways() {
+            const container = document.getElementById('activation-gateways-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            activePaymentGateways.forEach((gw, idx) => {
+                const btn = document.createElement('button');
+                btn.type = "button";
+                btn.className = `gateway-card border border-pink-100 rounded-2xl p-2.5 flex items-center justify-center gap-2 bg-white transition ${selectedActivationGateway === gw.name ? 'selected' : ''}`;
+                btn.onclick = () => {
+                    selectedActivationGateway = gw.name;
+                    renderActivationGateways();
+                    updateActivationAdminDetails();
+                };
+                btn.innerHTML = `
+                    <div class="h-6 flex items-center justify-center">${gw.svg}</div>
+                    <span class="text-xs font-bold text-slate-700">${gw.name}</span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function updateActivationAdminDetails() {
+            const numEl = document.getElementById('activation-admin-number');
+            const instEl = document.getElementById('active-method-instruction');
+            if (!numEl) return;
+
+            if (selectedActivationGateway === "বিকাশ") {
+                numEl.innerText = appSettings.adminBkashNumber || "018XXXXXXXX";
+                instEl.innerText = "বিকাশ পার্সোনাল সেন্ড মানি";
+            } else {
+                numEl.innerText = appSettings.adminNagadNumber || "017XXXXXXXX";
+                instEl.innerText = "নগদ পার্সোনাল সেন্ড মানি";
+            }
+        }
+
+        function copyAdminNumber() {
+            triggerHaptic('medium');
+            const num = document.getElementById('activation-admin-number').innerText;
+            navigator.clipboard.writeText(num);
+            showToast("নাম্বারটি সফলভাবে কপি হয়েছে!", "success");
+        }
+
+        function renderActivationStatusBanner() {
+            const banner = document.getElementById('activation-status-banner');
+            const submitBtn = document.getElementById('submit-activation-btn');
+
+            if (userData.isActivated) {
+                banner.className = "p-3 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold flex items-center gap-2";
+                banner.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i> আপনার অ্যাকাউন্টটি অ্যাক্টিভ করা আছে!`;
+                banner.classList.remove('hidden');
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50');
+                submitBtn.innerText = "আইডি অলরেডি অ্যাক্টিভ";
+            } else if (userData.activationStatus === 'pending') {
+                banner.className = "p-3 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold flex items-center gap-2";
+                banner.innerHTML = `<i class="fa-solid fa-clock-rotate-left text-amber-500 text-sm animate-spin"></i> আপনার সাবমিশনটি যাচাইাধীন (পেন্ডিং) রয়েছে! অ্যাডমিন যাচাই শেষ করলেই স্বয়ংক্রিয়ভাবে অ্যাকাউন্ট অ্যাক্টিভ হবে।`;
+                banner.classList.remove('hidden');
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50');
+                submitBtn.innerText = "যাচাই পেন্ডিং রয়েছে";
+            } else {
+                banner.classList.add('hidden');
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50');
+                submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> রিকোয়েস্ট নিশ্চিত করুন`;
+            }
+        }
+
+        async function submitActivationRequest(e) {
+            e.preventDefault();
+            triggerHaptic('medium');
+
+            if (userData.isActivated) return showToast("আপনার অ্যাকাউন্ট অলরেডি অ্যাক্টিভ!", "info");
+            if (userData.activationStatus === 'pending') return showToast("আপনার রিকোয়েস্ট ইতিমধ্যে পেন্ডিং রয়েছে!", "error");
+
+            const senderNum = document.getElementById('sender-number-input').value.trim();
+            const trxId = document.getElementById('sender-trx-input').value.trim();
+
+            if (!senderNum || senderNum.length < 11) {
+                return showToast("সঠিক মোবাইল নাম্বার প্রদান করুন", "error");
+            }
+            if (!trxId || trxId.length < 4) {
+                return showToast("সঠিক TrxID প্রদান করুন", "error");
+            }
+
+            const btn = document.getElementById('submit-activation-btn');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> জমা হচ্ছে...`;
+
+            try {
+                const fee = parseFloat(appSettings.activationFee || 100);
+
+                await db.collection('activations').add({
+                    userId: currentUser.id.toString(),
+                    username: userData.username || currentUser.first_name || "User",
+                    method: selectedActivationGateway,
+                    senderNumber: senderNum,
+                    trxId: trxId.toUpperCase(),
+                    amount: fee,
+                    status: 'pending',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                await db.collection('users').doc(currentUser.id.toString()).update({
+                    activationStatus: 'pending'
+                });
+
+                userData.activationStatus = 'pending';
+                updateUserUI(userData);
+                renderActivationStatusBanner();
+
+                showToast("অ্যাক্টিভেশন রিকোয়েস্ট পেন্ডিং রয়েছে! খুব শীঘ্রই যাচাই করা হবে।", "success");
+                document.getElementById('sender-number-input').value = "";
+                document.getElementById('sender-trx-input').value = "";
+
+                // Send bot notice if available
+                sendBotMessage(currentUser.id, `⚡ <b>অ্যাক্টিভেশন রিকোয়েস্ট জমা হয়েছে!</b>\n\n💳 <b>মেথড:</b> ${selectedActivationGateway}\n📱 <b>নাম্বার:</b> ${senderNum}\n🆔 <b>TrxID:</b> <code>${trxId.toUpperCase()}</code>\n💰 <b>পরিমাণ:</b> ৳ ${fee.toFixed(2)}\n\n<i>অ্যাডমিন যাচাই করার পর আপনার অ্যাকাউন্টটি সক্রিয় হবে।</i>`);
+
+                setTimeout(() => {
+                    closeActivationModal();
+                }, 1200);
+
+            } catch(err) {
+                console.error(err);
+                showToast("রিকোয়েস্ট পাঠাতে ব্যর্থ হয়েছে, পুনরায় চেষ্টা করুন", "error");
+                btn.disabled = false;
+                btn.innerText = "রিকোয়েস্ট নিশ্চিত করুন";
+            }
+        }
+
+        // ==========================================
+        // UI & DASHBOARD UPDATES
+        // ==========================================
         function updateUserUI(data) {
             const bal = parseFloat(data.balance || 0).toFixed(2);
             document.getElementById('header-balance').innerText = bal;
@@ -917,11 +1213,52 @@
             const link = `https://t.me/${BOT_USERNAME}/${BOT_APP_NAME}?startapp=ref_${currentUser.id}`;
             document.getElementById('home-ref-link').innerText = link;
 
+            // Activation Status Elements
+            const headerBadge = document.getElementById('header-status-badge');
+            const profileBadge = document.getElementById('profile-activation-badge');
+            const homeAlert = document.getElementById('home-activation-alert-banner');
+            const quickBtnText = document.getElementById('quick-activate-btn-text');
+
+            if (data.isActivated) {
+                headerBadge.className = "text-[9px] bg-emerald-50 text-emerald-600 border border-emerald-200 px-2 py-0.5 rounded-full font-bold";
+                headerBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> অ্যাক্টিভ`;
+
+                profileBadge.className = "px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-200 inline-flex items-center gap-1.5";
+                profileBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> অ্যাকাউন্ট সক্রিয় (Active ID)`;
+
+                homeAlert.classList.add('hidden');
+                quickBtnText.innerText = "ভেরিফাইড";
+            } else if (data.activationStatus === 'pending') {
+                headerBadge.className = "text-[9px] bg-amber-50 text-amber-600 border border-amber-200 px-2 py-0.5 rounded-full font-bold animate-pulse";
+                headerBadge.innerHTML = `<i class="fa-solid fa-hourglass-half"></i> পেন্ডিং`;
+
+                profileBadge.className = "px-4 py-1.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200 inline-flex items-center gap-1.5";
+                profileBadge.innerHTML = `<i class="fa-solid fa-clock-rotate-left fa-spin"></i> ভেরিফিকেশন পেন্ডিং`;
+
+                homeAlert.classList.remove('hidden');
+                homeAlert.querySelector('h4').innerText = "অ্যাক্টিভেশন পেন্ডিং রয়েছে";
+                homeAlert.querySelector('p').innerText = "অ্যাডমিন যাচাই করার সাথে সাথে কাজ চালু হবে";
+                quickBtnText.innerText = "পেন্ডিং...";
+            } else {
+                headerBadge.className = "text-[9px] bg-rose-50 text-rose-600 border border-rose-200 px-2 py-0.5 rounded-full font-bold animate-pulse";
+                headerBadge.innerHTML = `<i class="fa-solid fa-shield-xmark"></i> ইন-অ্যাক্টিভ`;
+
+                profileBadge.className = "px-4 py-1.5 rounded-full text-xs font-bold bg-[#e2136e] text-white shadow-md inline-flex items-center gap-1.5 btn-press";
+                profileBadge.innerHTML = `<i class="fa-solid fa-bolt"></i> আইডি অ্যাক্টিভ করুন (৳${appSettings.activationFee})`;
+
+                homeAlert.classList.remove('hidden');
+                quickBtnText.innerText = "আইডি অ্যাক্টিভ";
+            }
+
             renderTasks();
         }
 
-        // SECURE TIMER AD WATCH
+        // ==========================================
+        // SECURE AD WATCHING
+        // ==========================================
         function startSecureAdWatch() {
+            if (!checkActivationGuard()) return;
+
             triggerHaptic('medium');
             if ((userData.dailyAdsWatched || 0) >= (appSettings.dailyAdLimit || 50)) {
                 return showToast("আজকের অ্যাড সীমা শেষ!", "error");
@@ -982,7 +1319,9 @@
             }
         }
 
-        // TASKS SYSTEM
+        // ==========================================
+        // TASKS ENGINE
+        // ==========================================
         function renderTasks() {
             const container = document.getElementById('dynamic-tasks-container');
             if (!container) return;
@@ -1016,6 +1355,8 @@
         }
 
         function doTask(taskId, link, reward) {
+            if (!checkActivationGuard()) return;
+
             triggerHaptic('medium');
             tg ? tg.openLink(link) : window.open(link, '_blank');
             showToast("টাস্ক যাচাই করা হচ্ছে, অনুগ্রহ করে ৫ সেকেন্ড অপেক্ষা করুন...", "info");
@@ -1040,7 +1381,9 @@
             }, 5000);
         }
 
-        // PAYMENT GATEWAYS WITH SVGS
+        // ==========================================
+        // WITHDRAWAL ENGINE
+        // ==========================================
         function renderGateways() {
             const grid = document.getElementById('gateways-grid');
             grid.innerHTML = '';
@@ -1060,7 +1403,7 @@
         }
 
         function selectGateway(elem, method) {
-            document.querySelectorAll('.gateway-card').forEach(b => b.classList.remove('selected'));
+            document.querySelectorAll('#gateways-grid .gateway-card').forEach(b => b.classList.remove('selected'));
             elem.classList.add('selected');
             document.getElementById('selected-payment-method').value = method.name;
             document.getElementById('account-field-label').innerText = `${method.name} পার্সোনাল নাম্বার`;
@@ -1076,6 +1419,8 @@
         }
 
         async function submitWithdrawal() {
+            if (!checkActivationGuard()) return;
+
             triggerHaptic('medium');
             const amount = parseFloat(document.getElementById('withdraw-amount-input').value);
             const number = document.getElementById('withdraw-account-input').value.trim();
@@ -1123,7 +1468,9 @@
             }
         }
 
-        // POPUP NOTICE
+        // ==========================================
+        // NOTICES & NAVIGATION
+        // ==========================================
         async function checkPopupNotice() {
             try {
                 const snap = await db.collection('notices').orderBy('date', 'desc').limit(1).get();
@@ -1155,7 +1502,6 @@
             document.getElementById('notice-modal').classList.add('hidden');
         }
 
-        // NAVIGATION & UTILS
         function switchTab(tabId) {
             triggerHaptic('light');
             document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden'));
@@ -1179,7 +1525,7 @@
             const t = document.getElementById('toast');
             document.getElementById('toast-msg').innerText = msg;
             const icon = document.getElementById('toast-icon');
-            icon.className = type === 'error' ? 'fa-solid fa-circle-xmark text-rose-400' : 'fa-solid fa-circle-check text-pink-400';
+            icon.className = type === 'error' ? 'fa-solid fa-circle-xmark text-rose-400' : (type === 'info' ? 'fa-solid fa-circle-info text-blue-400' : 'fa-solid fa-circle-check text-pink-400');
             t.style.top = '25px';
             setTimeout(() => t.style.top = '-60px', 3000);
         }
