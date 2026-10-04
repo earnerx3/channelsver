@@ -590,6 +590,12 @@
         let adSecondsLeft = 15;
         let currentMonetagZone = "";
 
+        // Helper function: নির্ভুলভাবে ইউজার অ্যাক্টিভ কিনা চেক করা
+        function isUserActive(u = userData) {
+            if (!u) return false;
+            return u.isActivated === true || u.isActivated === "true" || u.activationStatus === 'approved';
+        }
+
         function getEmbedUrl(url) {
             if(!url) return "";
             let videoId = "";
@@ -847,10 +853,15 @@
             }
         }
 
+        // 🔥 আপডেট: ইউজার অ্যাক্টিভ হলে নিশ্চিতভাবে পপআপ হাইড হবে
         function onAppUnlocked() {
-            if (!userData.isActivated && userData.activationStatus !== 'pending') {
+            const active = isUserActive(userData);
+            const pending = userData.activationStatus === 'pending';
+
+            if (!active && !pending) {
                 document.getElementById('activation-reminder-modal').classList.remove('hidden');
             } else {
+                document.getElementById('activation-reminder-modal').classList.add('hidden');
                 checkPopupNotice();
             }
         }
@@ -894,13 +905,30 @@
 
                 if (!uDoc.exists) {
                     await registerUser(uRef);
+                    const freshDoc = await uRef.get();
+                    if (freshDoc.exists) {
+                        userData = { ...userData, ...freshDoc.data() };
+                    }
                 } else {
-                    checkDailyReset(uRef, uDoc.data());
+                    // 🔥 ইনস্ট্যান্ট মেমোরিতে অ্যাসাইন: রেস-কন্ডিশন ফিক্স
+                    const serverData = uDoc.data();
+                    userData = { ...userData, ...serverData };
+                    if (isUserActive(userData)) {
+                        userData.isActivated = true;
+                    }
+                    checkDailyReset(uRef, serverData);
                 }
+
+                // ডাটা সাথে সাথে UI তে লোড করে দেওয়া
+                updateUserUI(userData);
 
                 uRef.onSnapshot(doc => {
                     if(doc.exists) {
-                        userData = { ...userData, ...doc.data() };
+                        const d = doc.data();
+                        userData = { ...userData, ...d };
+                        if (isUserActive(userData)) {
+                            userData.isActivated = true;
+                        }
                         updateUserUI(userData);
                     }
                 });
@@ -952,7 +980,7 @@
 
                 setTimeout(() => {
                     document.getElementById('global-loader').style.display = 'none';
-                }, 400);
+                }, 300);
 
             } catch(e) {
                 console.error(e);
@@ -1034,7 +1062,7 @@
         }
 
         function checkActivationGuard() {
-            if (userData.isActivated) {
+            if (isUserActive(userData)) {
                 return true;
             }
             triggerHaptic('error');
@@ -1118,7 +1146,7 @@
             const banner = document.getElementById('activation-status-banner');
             const submitBtn = document.getElementById('submit-activation-btn');
 
-            if (userData.isActivated) {
+            if (isUserActive(userData)) {
                 banner.className = "p-3 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold flex items-center gap-2";
                 banner.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i> আপনার অ্যাকাউন্টটি অ্যাক্টিভ করা আছে!`;
                 banner.classList.remove('hidden');
@@ -1144,7 +1172,7 @@
             e.preventDefault();
             triggerHaptic('medium');
 
-            if (userData.isActivated) return showToast("আপনার অ্যাকাউন্ট অলরেডি অ্যাক্টিভ!", "info");
+            if (isUserActive(userData)) return showToast("আপনার অ্যাকাউন্ট অলরেডি অ্যাক্টিভ!", "info");
             if (userData.activationStatus === 'pending') return showToast("আপনার রিকোয়েস্ট ইতিমধ্যে পেন্ডিং রয়েছে!", "error");
 
             const senderNum = document.getElementById('sender-number-input').value.trim();
@@ -1205,6 +1233,9 @@
         // UI & DASHBOARD UPDATES
         // ==========================================
         function updateUserUI(data) {
+            const active = isUserActive(data);
+            const pending = data.activationStatus === 'pending';
+
             const bal = parseFloat(data.balance || 0).toFixed(2);
             document.getElementById('header-balance').innerText = bal;
             document.getElementById('home-balance').innerText = bal;
@@ -1233,8 +1264,12 @@
             const profileBadge = document.getElementById('profile-activation-badge');
             const homeAlert = document.getElementById('home-activation-alert-banner');
             const quickBtnText = document.getElementById('quick-activate-btn-text');
+            const reminderModal = document.getElementById('activation-reminder-modal');
 
-            if (data.isActivated) {
+            if (active) {
+                // 🔥 অ্যাক্টিভ ইউজারের ক্ষেত্রে রিমাইন্ডার পপআপ জোরপূর্বক বন্ধ রাখা
+                if (reminderModal) reminderModal.classList.add('hidden');
+
                 headerBadge.className = "text-[9px] bg-emerald-50 text-emerald-600 border border-emerald-200 px-2 py-0.5 rounded-full font-bold";
                 headerBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> অ্যাক্টিভ`;
 
@@ -1243,7 +1278,9 @@
 
                 homeAlert.classList.add('hidden');
                 quickBtnText.innerText = "ভেরিফাইড";
-            } else if (data.activationStatus === 'pending') {
+            } else if (pending) {
+                if (reminderModal) reminderModal.classList.add('hidden');
+
                 headerBadge.className = "text-[9px] bg-amber-50 text-amber-600 border border-amber-200 px-2 py-0.5 rounded-full font-bold animate-pulse";
                 headerBadge.innerHTML = `<i class="fa-solid fa-hourglass-half"></i> পেন্ডিং`;
 
