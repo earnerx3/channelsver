@@ -63,7 +63,6 @@
         .nav-item.active { color: #e2136e; }
         .nav-item.active .nav-icon { background-color: #fde8f1; transform: translateY(-3px); color: #e2136e; }
         
-        /* Payment Gateway Selection Active Styles */
         .gateway-card {
             transition: all 0.2s ease-in-out;
             cursor: pointer;
@@ -88,7 +87,7 @@
         <p class="text-[#e2136e] text-xs mt-2 font-bold animate-pulse" id="loader-status-text">ডাটা ভেরিফাই ও লোড হচ্ছে...</p>
     </div>
 
-    <!-- Error/Notice Screen for invalid environment -->
+    <!-- Error Screen -->
     <div id="auth-error-screen" class="fixed inset-0 z-50 bg-[#fffbfd] flex-col items-center justify-center p-6 text-center hidden">
         <div class="w-16 h-16 bg-pink-100 text-[#e2136e] rounded-full flex items-center justify-center text-3xl mb-4 shadow-inner">
             <i class="fa-solid fa-lock"></i>
@@ -102,7 +101,7 @@
         </button>
     </div>
 
-    <!-- MANDATORY TELEGRAM CHANNEL JOIN MODAL -->
+    <!-- Telegram Channel Gate Modal -->
     <div id="channel-gate-modal" class="fixed inset-0 z-45 flex items-center justify-center bg-slate-900/80 backdrop-blur-md hidden px-4">
         <div class="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl border border-pink-100 flex flex-col max-h-[92vh]">
             <div class="text-center mb-3">
@@ -115,59 +114,53 @@
                 </p>
             </div>
 
-            <!-- Dynamic Channel List Container -->
-            <div id="mandatory-channel-list" class="space-y-2.5 overflow-y-auto my-2 py-1 pr-1 flex-1">
-                <!-- Injected Dynamically -->
-            </div>
+            <div id="mandatory-channel-list" class="space-y-2.5 overflow-y-auto my-2 py-1 pr-1 flex-1"></div>
 
             <div class="mt-3 space-y-2 pt-2 border-t border-slate-100">
                 <button id="verify-channels-btn" onclick="verifyAllChannelsNow()" class="w-full bg-[#e2136e] text-white font-bold py-3.5 rounded-xl btn-press shadow-md text-xs flex items-center justify-center gap-2">
                     <i class="fa-solid fa-circle-check"></i> 
                     <span id="verify-btn-text">আমি জয়েন করেছি (যাচাই করুন)</span>
                 </button>
-                <p class="text-[10px] text-center text-slate-400">
-                    সব চ্যানেল সবুজ টিক চিহ্ন সম্পন্ন হলে ড্যাশবোর্ড আনলক হবে।
-                </p>
             </div>
         </div>
     </div>
 
-    <!-- 1. INITIAL ACTIVATION REMINDER POPUP -->
-    <div id="activation-reminder-modal" class="fixed inset-0 z-40 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden px-5">
-        <div class="bg-white rounded-[2rem] max-w-sm w-full p-6 shadow-2xl border border-pink-100 text-center">
+    <!-- Withdrawal Locked Notice Modal -->
+    <div id="withdraw-lock-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-md hidden px-5">
+        <div class="bg-white rounded-[2rem] max-w-sm w-full p-6 shadow-2xl border border-pink-100 text-center animate-bounce-short">
             <div class="w-16 h-16 bg-pink-50 text-[#e2136e] rounded-2xl flex items-center justify-center mx-auto mb-3 text-3xl shadow-inner border border-pink-100">
-                <i class="fa-solid fa-shield-heart"></i>
+                <i class="fa-solid fa-user-shield"></i>
             </div>
-            <h3 class="text-base font-black text-slate-800">অ্যাকাউন্ট অ্যাক্টিভেশন আবশ্যক</h3>
+            <h3 class="text-base font-black text-slate-800">অ্যাকাউন্ট ভেরিফিকেশন আবশ্যক</h3>
             <p class="text-slate-600 text-xs mt-2 leading-relaxed font-medium">
-                আপনার অ্যাকাউন্টটি এখনও সক্রিয় করা হয়নি। প্রতিদিন বিজ্ঞাপন দেখে ও টাস্ক করে নিশ্চিত আয় করতে এবং টাকা তুলতে এখনই আপনার আইডি সক্রিয় করুন।
+                টাকা তোলার জন্য আপনার আইডিটি ভেরিফাই করা প্রয়োজন। মাত্র একবার ভেরিফিকেশন ফি প্রদান করে আইডি সক্রিয় করুন এবং সাথে সাথে টাকা উত্তোলন করুন।
             </p>
-            <div class="mt-2 bg-pink-50/80 p-3 rounded-xl border border-pink-100">
-                <span class="text-[11px] text-slate-500 font-bold block">অ্যাক্টিভেশন ফি:</span>
+            <div class="mt-3 bg-pink-50/80 p-3 rounded-xl border border-pink-100">
+                <span class="text-[11px] text-slate-500 font-bold block">আইডি ভেরিফিকেশন ফি:</span>
                 <span class="text-lg font-black text-[#e2136e] font-inter">৳ <span class="activation-fee-text">100.00</span></span>
             </div>
             <div class="mt-5 space-y-2">
-                <button onclick="openActivationModal(); closeActivationReminderModal();" class="w-full bg-[#e2136e] text-white font-bold py-3.5 rounded-xl btn-press shadow-md text-xs flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-bolt"></i> এখনই আইডি অ্যাক্টিভ করুন
+                <button onclick="closeWithdrawLockModal(); openActivationModal();" class="w-full bg-[#e2136e] text-white font-bold py-3.5 rounded-xl btn-press shadow-md text-xs flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-shield-check"></i> এখনই আইডি ভেরিফাই করুন
                 </button>
-                <button onclick="closeActivationReminderModal()" class="w-full bg-slate-100 text-slate-600 font-bold py-2.5 rounded-xl btn-press text-xs">
-                    পরে করব (অ্যাপ ঘুরে দেখুন)
+                <button onclick="closeWithdrawLockModal()" class="w-full bg-slate-100 text-slate-600 font-bold py-2.5 rounded-xl btn-press text-xs">
+                    বাতিল করুন
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- 2. FULL ACCOUNT ACTIVATION (DEPOSIT) MODAL -->
+    <!-- Activation / Verification Modal -->
     <div id="activation-flow-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-md hidden px-4">
         <div class="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl border border-pink-100 flex flex-col max-h-[94vh]">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
                 <div class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-lg bg-pink-50 text-[#e2136e] flex items-center justify-center text-sm font-bold">
-                        <i class="fa-solid fa-wallet"></i>
+                        <i class="fa-solid fa-shield-halved"></i>
                     </div>
                     <div>
-                        <h3 class="font-extrabold text-sm text-slate-800">আইডি অ্যাক্টিভেশন</h3>
-                        <p class="text-[10px] text-slate-400">অ্যাকাউন্ট ভেরিফিকেশন ও ডিপোজিট</p>
+                        <h3 class="font-extrabold text-sm text-slate-800">আইডি ভেরিফিকেশন</h3>
+                        <p class="text-[10px] text-slate-400">অ্যাকাউন্ট নিশ্চিতকরণ ও অ্যাক্টিভেশন</p>
                     </div>
                 </div>
                 <button onclick="closeActivationModal()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center text-xs">
@@ -176,15 +169,11 @@
             </div>
 
             <div class="overflow-y-auto space-y-3.5 flex-1 pr-1">
-                <!-- Payment Method Toggle with Real Logos -->
                 <div>
                     <label class="text-[11px] font-bold text-slate-700 block mb-1.5">পেমেন্ট মেথড নির্বাচন করুন</label>
-                    <div class="grid grid-cols-2 gap-2.5" id="activation-gateways-container">
-                        <!-- Injected Dynamically with Official Logos -->
-                    </div>
+                    <div class="grid grid-cols-2 gap-2.5" id="activation-gateways-container"></div>
                 </div>
 
-                <!-- Admin Payee Number Card with Instant Copy -->
                 <div class="bg-gradient-to-r from-pink-50 to-rose-50 p-3.5 rounded-2xl border border-pink-200">
                     <div class="flex justify-between items-center mb-1">
                         <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide" id="active-method-instruction">বিকাশ পার্সোনাল সেন্ড মানি</span>
@@ -201,7 +190,6 @@
                     </p>
                 </div>
 
-                <!-- Form Fields -->
                 <form onsubmit="submitActivationRequest(event)" class="space-y-3">
                     <div>
                         <label class="text-[11px] font-bold text-slate-700 block mb-1">যে নাম্বার থেকে টাকা পাঠিয়েছেন (Sender Number)</label>
@@ -266,32 +254,15 @@
             </div>
             <button onclick="openActivationModal()" class="text-[10px] bg-pink-50 hover:bg-pink-100 text-[#e2136e] border border-pink-200 px-3 py-1.5 rounded-full font-bold flex items-center gap-1 shadow-xs">
                 <i class="fa-solid fa-shield-halved"></i>
-                <span id="quick-activate-btn-text">আইডি অ্যাক্টিভ</span>
+                <span id="quick-activate-btn-text">আইডি ভেরিফাই</span>
             </button>
         </div>
 
         <!-- Scrollable Body -->
         <div class="flex-1 overflow-y-auto pt-20 pb-24 scroll-smooth" id="main-content">
             
-            <!-- Inactive Warning Card on Top of Home -->
-            <div id="home-activation-alert-banner" class="mx-5 mb-2 mt-1 p-3.5 bg-amber-50 rounded-2xl border border-amber-200 flex items-center justify-between shadow-xs hidden">
-                <div class="flex items-center gap-2.5 overflow-hidden">
-                    <div class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center text-sm shrink-0">
-                        <i class="fa-solid fa-lock"></i>
-                    </div>
-                    <div>
-                        <h4 class="text-xs font-black text-amber-900 leading-tight">অ্যাকাউন্ট নিষ্ক্রিয়!</h4>
-                        <p class="text-[10px] text-amber-700 leading-tight">কাজ শুরু করতে অ্যাক্টিভেশন আবশ্যক</p>
-                    </div>
-                </div>
-                <button onclick="openActivationModal()" class="bg-amber-600 hover:bg-amber-700 text-white text-[10px] font-black px-3 py-2 rounded-xl btn-press shrink-0 shadow-sm">
-                    অ্যাক্টিভ করুন
-                </button>
-            </div>
-
             <!-- 1. HOME VIEW -->
             <div id="view-home" class="p-5 space-y-4">
-                <!-- User Balance Card -->
                 <div class="gradient-card rounded-3xl p-5 text-white">
                     <div class="flex justify-between items-center mb-1">
                         <p class="text-[11px] font-semibold text-pink-100 uppercase tracking-wider">বর্তমান ওয়ালেট ব্যালেন্স</p>
@@ -299,16 +270,16 @@
                     </div>
                     <h1 class="text-3xl font-black mb-4 font-inter">৳ <span id="home-balance">0.00</span></h1>
                     <div class="flex gap-2">
-                        <button onclick="guardedSwitchTab('tasks')" class="flex-1 bg-white text-[#e2136e] py-2.5 rounded-xl font-bold text-xs shadow btn-press flex items-center justify-center gap-1.5">
+                        <button onclick="switchTab('tasks')" class="flex-1 bg-white text-[#e2136e] py-2.5 rounded-xl font-bold text-xs shadow btn-press flex items-center justify-center gap-1.5">
                             <i class="fa-solid fa-play"></i> কাজ করুন
                         </button>
-                        <button onclick="guardedSwitchTab('wallet')" class="flex-1 bg-black/20 text-white border border-white/30 py-2.5 rounded-xl font-bold text-xs btn-press flex items-center justify-center gap-1.5">
-                            <i class="fa-solid fa-money-bill-transfer"></i> উত্তোলন
+                        <button onclick="switchTab('wallet')" class="flex-1 bg-black/20 text-white border border-white/30 py-2.5 rounded-xl font-bold text-xs btn-press flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-money-bill-transfer"></i> উইথড্র
                         </button>
                     </div>
                 </div>
 
-                <!-- Admin Embedded YouTube Video Section -->
+                <!-- Video Guide Section -->
                 <div id="guide-video-wrapper" class="glass rounded-3xl p-4 border border-pink-100 shadow-sm space-y-2">
                     <div class="flex items-center gap-2 mb-1">
                         <i class="fa-brands fa-youtube text-rose-600 text-lg"></i>
@@ -319,15 +290,13 @@
                     </div>
                 </div>
 
-                <!-- Admin Controlled Rules Card -->
+                <!-- Rules Card -->
                 <div class="glass rounded-3xl p-4 border border-pink-100 shadow-sm space-y-2">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-circle-info text-[#e2136e] text-sm"></i>
                         <h3 class="font-bold text-xs text-slate-800">নিয়মাবলী ও নির্দেশিকা</h3>
                     </div>
-                    <div id="admin-rules-content" class="text-[11px] text-slate-600 leading-relaxed font-medium space-y-1.5 bg-pink-50/40 p-3 rounded-xl border border-pink-100/50">
-                        <!-- Loaded dynamically from Firebase -->
-                    </div>
+                    <div id="admin-rules-content" class="text-[11px] text-slate-600 leading-relaxed font-medium space-y-1.5 bg-pink-50/40 p-3 rounded-xl border border-pink-100/50"></div>
                 </div>
 
                 <!-- Referral Section -->
@@ -341,12 +310,12 @@
                     </div>
                     <div class="bg-slate-50 p-1.5 rounded-xl border border-slate-200 flex items-center gap-2">
                         <p class="text-[10px] text-slate-500 truncate flex-1 font-inter pl-2" id="home-ref-link">লোড হচ্ছে...</p>
-                        <button onclick="guardedCopyRefLink()" class="bg-[#e2136e] text-white text-[10px] px-3.5 py-2 rounded-lg font-bold btn-press shadow">কপি লিংক</button>
+                        <button onclick="copyRefLink()" class="bg-[#e2136e] text-white text-[10px] px-3.5 py-2 rounded-lg font-bold btn-press shadow">কপি লিংক</button>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. TASKS / ADS VIEW -->
+            <!-- 2. TASKS / ADS VIEW (১০০% ফ্রি ও আনলকড) -->
             <div id="view-tasks" class="p-5 space-y-5 hidden">
                 <div class="text-center">
                     <h2 class="text-xl font-black text-slate-800">টাস্ক ও অ্যাড জোন</h2>
@@ -384,24 +353,36 @@
                 </div>
             </div>
 
-            <!-- 3. WALLET / WITHDRAW VIEW -->
+            <!-- 3. WITHDRAW VIEW (আগে ওয়ালেট ছিল, এখন উইথড্র) -->
             <div id="view-wallet" class="p-5 space-y-4 hidden">
                 <div class="gradient-card rounded-3xl p-5 text-white text-center">
                     <p class="text-[11px] font-semibold text-pink-100 uppercase tracking-wider mb-0.5">উত্তোলনযোগ্য ব্যালেন্স</p>
                     <h1 class="text-3xl font-black font-inter">৳ <span id="wallet-balance">0.00</span></h1>
                 </div>
 
-                <div class="glass rounded-3xl p-5 shadow-sm space-y-3.5 border border-pink-100">
+                <!-- ইন-অ্যাক্টিভ হলে নোটিশ কার্ড শো করবে -->
+                <div id="withdraw-inactive-notice" class="bg-amber-50 border border-amber-200 p-3.5 rounded-2xl flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center text-sm shrink-0">
+                            <i class="fa-solid fa-lock"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-amber-900 leading-tight">উইথড্র সিস্টেম লক রয়েছে</h4>
+                            <p class="text-[10px] text-amber-700">টাকা তুলতে আইডি ভেরিফাই করুন</p>
+                        </div>
+                    </div>
+                    <button onclick="openActivationModal()" class="bg-amber-600 hover:bg-amber-700 text-white text-[10px] font-black px-3 py-1.5 rounded-xl btn-press shadow-sm">
+                        ভেরিফাই
+                    </button>
+                </div>
+
+                <div class="glass rounded-3xl p-5 shadow-sm space-y-3.5 border border-pink-100 relative">
                     <div>
                         <div class="flex justify-between items-center mb-2">
                             <label class="text-[11px] font-bold text-slate-600 block">পেমেন্ট মেথড সিলেক্ট করুন</label>
                             <span class="text-[10px] text-pink-600 font-bold bg-pink-50 px-2 py-0.5 rounded-full" id="charge-label">সার্ভিস ফি: ১০%</span>
                         </div>
-                        
-                        <!-- Official Brand bKash & Nagad Gateways -->
-                        <div id="gateways-grid" class="grid grid-cols-2 gap-2.5">
-                            <!-- Rendered with Official Logos -->
-                        </div>
+                        <div id="gateways-grid" class="grid grid-cols-2 gap-2.5"></div>
                         <input type="hidden" id="selected-payment-method" value="বিকাশ">
                     </div>
 
@@ -419,8 +400,10 @@
                         <input type="tel" id="withdraw-account-input" placeholder="01XXXXXXXXX" class="w-full bg-white border border-pink-100 rounded-xl py-2.5 px-3 text-xs focus:outline-none focus:border-[#e2136e] font-inter">
                     </div>
 
-                    <button onclick="submitWithdrawal()" class="w-full bg-[#e2136e] text-white font-bold py-3.5 rounded-xl shadow btn-press text-xs">
-                        উইথড্র রিকোয়েস্ট পাঠান
+                    <!-- বাটন লজিক: আনভেরিফাইড হলে লক স্টেট এবং ক্লিক করলে পপআপ আসবে -->
+                    <button id="withdraw-action-btn" onclick="handleWithdrawAction()" class="w-full bg-[#e2136e] text-white font-bold py-3.5 rounded-xl shadow btn-press text-xs flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-lock" id="withdraw-btn-icon"></i> 
+                        <span id="withdraw-btn-text">উইথড্র রিকোয়েস্ট পাঠান</span>
                     </button>
                 </div>
 
@@ -440,7 +423,6 @@
                     <h2 class="font-black text-base text-slate-800" id="profile-user-name">ব্যবহারকারী</h2>
                     <p class="text-[10px] text-slate-500 font-inter">User ID: <span id="profile-user-id">...</span></p>
 
-                    <!-- Account Status Card inside Profile -->
                     <div class="mt-3 inline-block">
                         <div id="profile-activation-badge" class="px-4 py-1.5 rounded-full text-xs font-black inline-flex items-center gap-1.5 shadow-xs cursor-pointer" onclick="openActivationModal()">
                             লোড হচ্ছে...
@@ -448,7 +430,6 @@
                     </div>
                 </div>
 
-                <!-- Profile Statistics -->
                 <div class="grid grid-cols-2 gap-3">
                     <div class="glass p-3.5 rounded-2xl border border-pink-50">
                         <span class="text-[10px] text-slate-400 font-bold block">সর্বমোট আয়</span>
@@ -464,7 +445,6 @@
                     </div>
                 </div>
 
-                <!-- Help & Support -->
                 <div class="space-y-2">
                     <a id="profile-support-btn" href="#" target="_blank" class="glass p-3.5 rounded-2xl flex items-center justify-between btn-press">
                         <div class="flex items-center gap-3">
@@ -478,19 +458,19 @@
 
         </div>
 
-        <!-- 4-Tab Bottom Navigation Bar -->
+        <!-- 4-Tab Bottom Navigation Bar (উইথড্র রিনেম করা হয়েছে) -->
         <div class="glass absolute bottom-0 w-full h-16 px-6 flex justify-between items-center z-30 rounded-t-3xl border-t border-pink-100/60 shadow-[0_-5px_20px_rgba(226,19,110,0.04)] bg-white/95">
             <button onclick="switchTab('home')" class="nav-item active flex flex-col items-center gap-1 transition-all" data-target="home">
                 <div class="nav-icon w-8 h-8 rounded-xl flex items-center justify-center transition-all"><i class="fa-solid fa-house text-sm"></i></div>
                 <span class="text-[9px] font-bold">হোম</span>
             </button>
-            <button onclick="guardedSwitchTab('tasks')" class="nav-item text-slate-400 flex flex-col items-center gap-1 transition-all" data-target="tasks">
+            <button onclick="switchTab('tasks')" class="nav-item text-slate-400 flex flex-col items-center gap-1 transition-all" data-target="tasks">
                 <div class="nav-icon w-8 h-8 rounded-xl flex items-center justify-center transition-all"><i class="fa-solid fa-list-check text-sm"></i></div>
                 <span class="text-[9px] font-bold">কাজ</span>
             </button>
-            <button onclick="guardedSwitchTab('wallet')" class="nav-item text-slate-400 flex flex-col items-center gap-1 transition-all" data-target="wallet">
-                <div class="nav-icon w-8 h-8 rounded-xl flex items-center justify-center transition-all"><i class="fa-solid fa-wallet text-sm"></i></div>
-                <span class="text-[9px] font-bold">ওয়ালেট</span>
+            <button onclick="switchTab('wallet')" class="nav-item text-slate-400 flex flex-col items-center gap-1 transition-all" data-target="wallet">
+                <div class="nav-icon w-8 h-8 rounded-xl flex items-center justify-center transition-all"><i class="fa-solid fa-money-bill-transfer text-sm"></i></div>
+                <span class="text-[9px] font-bold">উইথড্র</span>
             </button>
             <button onclick="switchTab('profile')" class="nav-item text-slate-400 flex flex-col items-center gap-1 transition-all" data-target="profile">
                 <div class="nav-icon w-8 h-8 rounded-xl flex items-center justify-center transition-all"><i class="fa-solid fa-user text-sm"></i></div>
@@ -525,9 +505,6 @@
         const db = firebase.firestore();
         const tg = window.Telegram?.WebApp;
 
-        // ==========================================
-        // 100% OFFICIAL REAL LOGOS (BKASH & NAGAD)
-        // ==========================================
         const BKASH_OFFICIAL_LOGO = `
             <div class="h-9 w-full flex items-center justify-center px-1">
                 <img src="https://www.logo.wine/a/logo/BKash/BKash-Logo.wine.svg" 
@@ -548,7 +525,6 @@
             </div>
         `;
 
-        // Global Settings
         let appSettings = {
             botToken: "", 
             adReward: 0.50,
@@ -561,7 +537,7 @@
             adminNagadNumber: "017XXXXXXXX",
             helpLink: "https://t.me/",
             guideVideoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-            howToEarnText: "১. অ্যাকাউন্ট অ্যাক্টিভ করে আনলিমিটেড ইনকাম শুরু করুন।\n২. প্রতিদিন অ্যাড ও টাস্ক সম্পন্ন করুন।\n৩. বন্ধুদের রেফার করে নিশ্চিত ক্যাশ নিন।",
+            howToEarnText: "১. আনলিমিটেড অ্যাড ও টাস্ক সম্পন্ন করে প্রতিদিন আয় করুন।\n২. বন্ধুদের রেফার করে নিশ্চিত ক্যাশ নিন।\n৩. আইডি ভেরিফাই করে সরাসরি বিকাশ ও নগদে টাকা উত্তোলন করুন।",
             adLink: "",
             monetagZoneId: "10487556",
             requiredChannels: [
@@ -571,10 +547,9 @@
         };
 
         let channelVerificationStatus = {};
-
         const activePaymentGateways = [
-            { id: "bkash", name: "বিকাশ", placeholder: "বিকাশ পার্সোনাল নাম্বার", logoHtml: BKASH_OFFICIAL_LOGO, type: "adminBkashNumber" },
-            { id: "nagad", name: "নগদ", placeholder: "নগদ পার্সোনাল নাম্বার", logoHtml: NAGAD_OFFICIAL_LOGO, type: "adminNagadNumber" }
+            { id: "bkash", name: "বিকাশ", placeholder: "বিকাশ পার্সোনাল নাম্বার", logoHtml: BKASH_OFFICIAL_LOGO },
+            { id: "nagad", name: "নগদ", placeholder: "নগদ পার্সোনাল নাম্বার", logoHtml: NAGAD_OFFICIAL_LOGO }
         ];
 
         let selectedActivationGateway = "বিকাশ";
@@ -590,7 +565,6 @@
         let adSecondsLeft = 15;
         let currentMonetagZone = "";
 
-        // Helper function: নির্ভুলভাবে ইউজার অ্যাক্টিভ কিনা চেক করা
         function isUserActive(u = userData) {
             if (!u) return false;
             return u.isActivated === true || u.isActivated === "true" || u.activationStatus === 'approved';
@@ -605,7 +579,6 @@
             return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
         }
 
-        // AUTH ENGINE
         function extractTelegramUser() {
             try {
                 if (tg?.initDataUnsafe?.user?.id) return tg.initDataUnsafe.user;
@@ -726,9 +699,6 @@
             } catch(e) {}
         }
 
-        // ==========================================
-        // TELEGRAM CHANNELS MANDATORY GATE SYSTEM
-        // ==========================================
         async function checkChannelMemberStatus(channelUsernameOrId) {
             if (!appSettings.botToken) return true;
             if (window.location.hostname === "localhost" || window.location.protocol === "file:") return true;
@@ -819,7 +789,7 @@
                 showToast("সকল চ্যানেল সফলভাবে ভেরিফাই হয়েছে!", "success");
                 document.getElementById('channel-gate-modal').classList.add('hidden');
                 document.getElementById('app-container').classList.remove('hidden');
-                onAppUnlocked();
+                checkPopupNotice();
             } else {
                 triggerHaptic('error');
                 showToast("লাল ক্রস চিহ্নিত চ্যানেলে জয়েন করে পুনরায় চেষ্টা করুন", "error");
@@ -831,7 +801,7 @@
             if (!channels.length) {
                 document.getElementById('channel-gate-modal').classList.add('hidden');
                 document.getElementById('app-container').classList.remove('hidden');
-                onAppUnlocked();
+                checkPopupNotice();
                 return;
             }
 
@@ -845,7 +815,7 @@
             if (initialAllJoined) {
                 document.getElementById('channel-gate-modal').classList.add('hidden');
                 document.getElementById('app-container').classList.remove('hidden');
-                onAppUnlocked();
+                checkPopupNotice();
             } else {
                 renderChannelGateItems();
                 document.getElementById('channel-gate-modal').classList.remove('hidden');
@@ -853,30 +823,11 @@
             }
         }
 
-        // 🔥 আপডেট: ইউজার অ্যাক্টিভ হলে নিশ্চিতভাবে পপআপ হাইড হবে
-        function onAppUnlocked() {
-            const active = isUserActive(userData);
-            const pending = userData.activationStatus === 'pending';
-
-            if (!active && !pending) {
-                document.getElementById('activation-reminder-modal').classList.remove('hidden');
-            } else {
-                document.getElementById('activation-reminder-modal').classList.add('hidden');
-                checkPopupNotice();
-            }
-        }
-
-        function closeActivationReminderModal() {
-            document.getElementById('activation-reminder-modal').classList.add('hidden');
-            checkPopupNotice();
-        }
-
         // ==========================================
         // APP INITIALIZATION
         // ==========================================
         async function initAppEngine() {
             try {
-                // 1. Settings listener
                 const settingsDoc = await db.collection('appConfig').doc('settings').get();
                 if (settingsDoc.exists) {
                     appSettings = { ...appSettings, ...settingsDoc.data() };
@@ -892,14 +843,12 @@
                     }
                 });
 
-                // 2. Dynamic Tasks Listener
                 db.collection('tasks').onSnapshot(snap => {
                     tasksList = [];
                     snap.forEach(d => tasksList.push({ id: d.id, ...d.data() }));
                     renderTasks();
                 });
 
-                // 3. User Document Realtime Verification
                 const uRef = db.collection('users').doc(currentUser.id.toString());
                 const uDoc = await uRef.get();
 
@@ -910,7 +859,6 @@
                         userData = { ...userData, ...freshDoc.data() };
                     }
                 } else {
-                    // 🔥 ইনস্ট্যান্ট মেমোরিতে অ্যাসাইন: রেস-কন্ডিশন ফিক্স
                     const serverData = uDoc.data();
                     userData = { ...userData, ...serverData };
                     if (isUserActive(userData)) {
@@ -919,7 +867,6 @@
                     checkDailyReset(uRef, serverData);
                 }
 
-                // ডাটা সাথে সাথে UI তে লোড করে দেওয়া
                 updateUserUI(userData);
 
                 uRef.onSnapshot(doc => {
@@ -933,7 +880,6 @@
                     }
                 });
 
-                // 4. Real-time Activation Requests Listener for this user
                 db.collection('activations')
                     .where('userId', '==', currentUser.id.toString())
                     .orderBy('createdAt', 'desc')
@@ -945,7 +891,6 @@
                         }
                     });
 
-                // 5. User Withdraw History Listener
                 db.collection('withdrawals')
                     .where('userId', '==', currentUser.id.toString())
                     .onSnapshot(snap => {
@@ -1050,9 +995,6 @@
             }
         }
 
-        // ==========================================
-        // ACTIVATION & GUARD ENGINE
-        // ==========================================
         function handleUserActivationStatusChange(status, data) {
             userData.activationStatus = status;
             if (status === 'approved') {
@@ -1061,42 +1003,24 @@
             updateUserUI(userData);
         }
 
-        function checkActivationGuard() {
-            if (isUserActive(userData)) {
-                return true;
-            }
-            triggerHaptic('error');
-            openActivationModal();
-            showToast("এই সুবিধা ব্যবহার করতে আগে আইডি অ্যাক্টিভ করুন!", "error");
-            return false;
-        }
-
-        function guardedSwitchTab(tabId) {
-            if (tabId === 'home' || tabId === 'profile') {
-                switchTab(tabId);
-                return;
-            }
-            if (checkActivationGuard()) {
-                switchTab(tabId);
-            }
-        }
-
-        function guardedCopyRefLink() {
-            if (checkActivationGuard()) {
-                copyRefLink();
-            }
-        }
-
         function openActivationModal() {
             triggerHaptic('medium');
-            const modal = document.getElementById('activation-flow-modal');
-            modal.classList.remove('hidden');
+            document.getElementById('activation-flow-modal').classList.remove('hidden');
             updateActivationAdminDetails();
             renderActivationStatusBanner();
         }
 
         function closeActivationModal() {
             document.getElementById('activation-flow-modal').classList.add('hidden');
+        }
+
+        function openWithdrawLockModal() {
+            triggerHaptic('medium');
+            document.getElementById('withdraw-lock-modal').classList.remove('hidden');
+        }
+
+        function closeWithdrawLockModal() {
+            document.getElementById('withdraw-lock-modal').classList.add('hidden');
         }
 
         function renderActivationGateways() {
@@ -1148,14 +1072,14 @@
 
             if (isUserActive(userData)) {
                 banner.className = "p-3 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold flex items-center gap-2";
-                banner.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i> আপনার অ্যাকাউন্টটি অ্যাক্টিভ করা আছে!`;
+                banner.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i> আপনার অ্যাকাউন্টটি ভেরিফাইড!`;
                 banner.classList.remove('hidden');
                 submitBtn.disabled = true;
                 submitBtn.classList.add('opacity-50');
-                submitBtn.innerText = "আইডি অলরেডি অ্যাক্টিভ";
+                submitBtn.innerText = "আইডি অলরেডি ভেরিফাইড";
             } else if (userData.activationStatus === 'pending') {
                 banner.className = "p-3 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold flex items-center gap-2";
-                banner.innerHTML = `<i class="fa-solid fa-clock-rotate-left text-amber-500 text-sm animate-spin"></i> আপনার সাবমিশনটি যাচাইাধীন (পেন্ডিং) রয়েছে! অ্যাডমিন যাচাই শেষ করলেই স্বয়ংক্রিয়ভাবে অ্যাকাউন্ট অ্যাক্টিভ হবে।`;
+                banner.innerHTML = `<i class="fa-solid fa-clock-rotate-left text-amber-500 text-sm animate-spin"></i> আপনার সাবমিশনটি যাচাইাধীন রয়েছে! অ্যাডমিন যাচাই করার পর আইডি ভেরিফাই হবে।`;
                 banner.classList.remove('hidden');
                 submitBtn.disabled = true;
                 submitBtn.classList.add('opacity-50');
@@ -1172,7 +1096,7 @@
             e.preventDefault();
             triggerHaptic('medium');
 
-            if (isUserActive(userData)) return showToast("আপনার অ্যাকাউন্ট অলরেডি অ্যাক্টিভ!", "info");
+            if (isUserActive(userData)) return showToast("আপনার অ্যাকাউন্ট অলরেডি ভেরিফাইড!", "info");
             if (userData.activationStatus === 'pending') return showToast("আপনার রিকোয়েস্ট ইতিমধ্যে পেন্ডিং রয়েছে!", "error");
 
             const senderNum = document.getElementById('sender-number-input').value.trim();
@@ -1211,11 +1135,11 @@
                 updateUserUI(userData);
                 renderActivationStatusBanner();
 
-                showToast("অ্যাক্টিভেশন রিকোয়েস্ট সফলভাবে জমা হয়েছে!", "success");
+                showToast("ভেরিফিকেশন রিকোয়েস্ট সফলভাবে জমা হয়েছে!", "success");
                 document.getElementById('sender-number-input').value = "";
                 document.getElementById('sender-trx-input').value = "";
 
-                sendBotMessage(currentUser.id, `⚡ <b>অ্যাক্টিভেশন রিকোয়েস্ট জমা হয়েছে!</b>\n\n💳 <b>মেথড:</b> ${selectedActivationGateway}\n📱 <b>নাম্বার:</b> ${senderNum}\n🆔 <b>TrxID:</b> <code>${trxId.toUpperCase()}</code>\n💰 <b>পরিমাণ:</b> ৳ ${fee.toFixed(2)}\n\n<i>অ্যাডমিন যাচাই করার পর আপনার অ্যাকাউন্টটি সক্রিয় হবে।</i>`);
+                sendBotMessage(currentUser.id, `⚡ <b>ভেরিফিকেশন রিকোয়েস্ট জমা হয়েছে!</b>\n\n💳 <b>মেথড:</b> ${selectedActivationGateway}\n📱 <b>নাম্বার:</b> ${senderNum}\n🆔 <b>TrxID:</b> <code>${trxId.toUpperCase()}</code>\n💰 <b>পরিমাণ:</b> ৳ ${fee.toFixed(2)}\n\n<i>অ্যাডমিন যাচাই করার পর আপনার অ্যাকাউন্টটি সক্রিয় হবে।</i>`);
 
                 setTimeout(() => {
                     closeActivationModal();
@@ -1259,61 +1183,80 @@
             const link = `https://t.me/${BOT_USERNAME}/${BOT_APP_NAME}?startapp=ref_${currentUser.id}`;
             document.getElementById('home-ref-link').innerText = link;
 
-            // Activation Badges
             const headerBadge = document.getElementById('header-status-badge');
             const profileBadge = document.getElementById('profile-activation-badge');
-            const homeAlert = document.getElementById('home-activation-alert-banner');
             const quickBtnText = document.getElementById('quick-activate-btn-text');
-            const reminderModal = document.getElementById('activation-reminder-modal');
+            const withdrawInactiveNotice = document.getElementById('withdraw-inactive-notice');
+            const withdrawBtnIcon = document.getElementById('withdraw-btn-icon');
+            const withdrawBtnText = document.getElementById('withdraw-btn-text');
+            const withdrawActionBtn = document.getElementById('withdraw-action-btn');
 
             if (active) {
-                // 🔥 অ্যাক্টিভ ইউজারের ক্ষেত্রে রিমাইন্ডার পপআপ জোরপূর্বক বন্ধ রাখা
-                if (reminderModal) reminderModal.classList.add('hidden');
-
                 headerBadge.className = "text-[9px] bg-emerald-50 text-emerald-600 border border-emerald-200 px-2 py-0.5 rounded-full font-bold";
-                headerBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> অ্যাক্টিভ`;
+                headerBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> ভেরিফাইড`;
 
                 profileBadge.className = "px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-200 inline-flex items-center gap-1.5";
-                profileBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> অ্যাকাউন্ট সক্রিয় (Active ID)`;
+                profileBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> অ্যাকাউন্ট ভেরিফাইড (Active ID)`;
 
-                homeAlert.classList.add('hidden');
                 quickBtnText.innerText = "ভেরিফাইড";
+                
+                // উইথড্র বাটন আনলক
+                if (withdrawInactiveNotice) withdrawInactiveNotice.classList.add('hidden');
+                if (withdrawBtnIcon) withdrawBtnIcon.className = "fa-solid fa-paper-plane";
+                if (withdrawBtnText) withdrawBtnText.innerText = "উইথড্র রিকোয়েস্ট পাঠান";
+                if (withdrawActionBtn) {
+                    withdrawActionBtn.className = "w-full bg-[#e2136e] text-white font-bold py-3.5 rounded-xl shadow btn-press text-xs flex items-center justify-center gap-2";
+                }
             } else if (pending) {
-                if (reminderModal) reminderModal.classList.add('hidden');
-
                 headerBadge.className = "text-[9px] bg-amber-50 text-amber-600 border border-amber-200 px-2 py-0.5 rounded-full font-bold animate-pulse";
                 headerBadge.innerHTML = `<i class="fa-solid fa-hourglass-half"></i> পেন্ডিং`;
 
                 profileBadge.className = "px-4 py-1.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200 inline-flex items-center gap-1.5";
                 profileBadge.innerHTML = `<i class="fa-solid fa-clock-rotate-left fa-spin"></i> ভেরিফিকেশন পেন্ডিং`;
 
-                homeAlert.classList.remove('hidden');
-                homeAlert.querySelector('h4').innerText = "অ্যাক্টিভেশন পেন্ডিং রয়েছে";
-                homeAlert.querySelector('p').innerText = "অ্যাডমিন যাচাই করার সাথে সাথে কাজ চালু হবে";
                 quickBtnText.innerText = "পেন্ডিং...";
+
+                if (withdrawInactiveNotice) {
+                    withdrawInactiveNotice.classList.remove('hidden');
+                    withdrawInactiveNotice.querySelector('h4').innerText = "ভেরিফিকেশন পেন্ডিং রয়েছে";
+                    withdrawInactiveNotice.querySelector('p').innerText = "অ্যাডমিন যাচাই করার পর উইথড্র চালু হবে";
+                }
+                if (withdrawBtnIcon) withdrawBtnIcon.className = "fa-solid fa-clock-rotate-left animate-spin";
+                if (withdrawBtnText) withdrawBtnText.innerText = "ভেরিফিকেশন যাচাইাধীন...";
+                if (withdrawActionBtn) {
+                    withdrawActionBtn.className = "w-full bg-amber-500 text-white font-bold py-3.5 rounded-xl shadow btn-press text-xs flex items-center justify-center gap-2";
+                }
             } else {
                 headerBadge.className = "text-[9px] bg-rose-50 text-rose-600 border border-rose-200 px-2 py-0.5 rounded-full font-bold animate-pulse";
-                headerBadge.innerHTML = `<i class="fa-solid fa-shield-xmark"></i> ইন-অ্যাক্টিভ`;
+                headerBadge.innerHTML = `<i class="fa-solid fa-shield-xmark"></i> আনভেরিফাইড`;
 
                 profileBadge.className = "px-4 py-1.5 rounded-full text-xs font-bold bg-[#e2136e] text-white shadow-md inline-flex items-center gap-1.5 btn-press";
-                profileBadge.innerHTML = `<i class="fa-solid fa-bolt"></i> আইডি অ্যাক্টিভ করুন (৳${appSettings.activationFee})`;
+                profileBadge.innerHTML = `<i class="fa-solid fa-bolt"></i> আইডি ভেরিফাই করুন (৳${appSettings.activationFee})`;
 
-                homeAlert.classList.remove('hidden');
-                quickBtnText.innerText = "আইডি অ্যাক্টিভ";
+                quickBtnText.innerText = "আইডি ভেরিফাই";
+
+                if (withdrawInactiveNotice) {
+                    withdrawInactiveNotice.classList.remove('hidden');
+                    withdrawInactiveNotice.querySelector('h4').innerText = "উইথড্র সিস্টেম লক রয়েছে";
+                    withdrawInactiveNotice.querySelector('p').innerText = "টাকা তুলতে আইডি ভেরিফাই করুন";
+                }
+                if (withdrawBtnIcon) withdrawBtnIcon.className = "fa-solid fa-lock";
+                if (withdrawBtnText) withdrawBtnText.innerText = "উইথড্র করুন (লকড - ভেরিফাই প্রয়োজন)";
+                if (withdrawActionBtn) {
+                    withdrawActionBtn.className = "w-full bg-slate-800 text-rose-300 font-bold py-3.5 rounded-xl shadow btn-press text-xs flex items-center justify-center gap-2 border border-rose-500/30";
+                }
             }
 
             renderTasks();
         }
 
         // ==========================================
-        // SECURE AD WATCHING
+        // 100% UNLOCKED ADS ENGINE (কোনো অ্যাক্টিভেশন ছাড়াই কাজ করা যাবে)
         // ==========================================
         function startSecureAdWatch() {
-            if (!checkActivationGuard()) return;
-
             triggerHaptic('medium');
             if ((userData.dailyAdsWatched || 0) >= (appSettings.dailyAdLimit || 50)) {
-                return showToast("আজকের অ্যাড সীমা শেষ!", "error");
+                return showToast("আজকের অ্যাড দেখার সীমা শেষ!", "error");
             }
 
             const btn = document.getElementById('watch-ad-btn');
@@ -1372,7 +1315,7 @@
         }
 
         // ==========================================
-        // TASKS ENGINE
+        // 100% UNLOCKED TASKS ENGINE
         // ==========================================
         function renderTasks() {
             const container = document.getElementById('dynamic-tasks-container');
@@ -1407,8 +1350,6 @@
         }
 
         function doTask(taskId, link, reward) {
-            if (!checkActivationGuard()) return;
-
             triggerHaptic('medium');
             tg ? tg.openLink(link) : window.open(link, '_blank');
             showToast("টাস্ক যাচাই করা হচ্ছে, অনুগ্রহ করে ৫ সেকেন্ড অপেক্ষা করুন...", "info");
@@ -1434,7 +1375,7 @@
         }
 
         // ==========================================
-        // WITHDRAWAL ENGINE (OFFICIAL LOGOS)
+        // SMART WITHDRAWAL GUARD & PROCESSING
         // ==========================================
         function renderGateways() {
             const grid = document.getElementById('gateways-grid');
@@ -1471,9 +1412,23 @@
             document.getElementById('net-receive-label').innerText = `আপনি পাবেন: ৳${net.toFixed(2)}`;
         }
 
-        async function submitWithdrawal() {
-            if (!checkActivationGuard()) return;
+        // উইথড্র বাটন হ্যান্ডলার (লকড থাকলে ভেরিফিকেশন পপআপ নিয়ে যাবে)
+        function handleWithdrawAction() {
+            if (!isUserActive(userData)) {
+                triggerHaptic('error');
+                if (userData.activationStatus === 'pending') {
+                    showToast("আপনার আইডি ভেরিফিকেশন এখনও যাচাইাধীন রয়েছে!", "info");
+                    openActivationModal();
+                } else {
+                    openWithdrawLockModal();
+                }
+                return;
+            }
 
+            processActualWithdrawal();
+        }
+
+        async function processActualWithdrawal() {
             triggerHaptic('medium');
             const amount = parseFloat(document.getElementById('withdraw-amount-input').value);
             const number = document.getElementById('withdraw-account-input').value.trim();
