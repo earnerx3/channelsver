@@ -62,10 +62,17 @@
         .btn-press:active { transform: scale(0.96); }
         .nav-item.active { color: #e2136e; }
         .nav-item.active .nav-icon { background-color: #fde8f1; transform: translateY(-3px); color: #e2136e; }
+        
+        /* Payment Gateway Selection Active Styles */
+        .gateway-card {
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
         .gateway-card.selected {
-            border-color: #e2136e;
-            background-color: #fde8f1;
-            box-shadow: 0 0 0 2px rgba(226, 19, 110, 0.3);
+            border-color: #e2136e !important;
+            background-color: #fff0f6 !important;
+            box-shadow: 0 4px 12px -2px rgba(226, 19, 110, 0.25);
+            transform: translateY(-1px);
         }
         ::-webkit-scrollbar { width: 0px; }
     </style>
@@ -125,9 +132,9 @@
         </div>
     </div>
 
-    <!-- 1. INITIAL ACTIVATION REMINDER POPUP (FIRST VISIT) -->
+    <!-- 1. INITIAL ACTIVATION REMINDER POPUP -->
     <div id="activation-reminder-modal" class="fixed inset-0 z-40 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden px-5">
-        <div class="bg-white rounded-[2rem] max-w-sm w-full p-6 shadow-2xl border border-pink-100 text-center animate-bounce-short">
+        <div class="bg-white rounded-[2rem] max-w-sm w-full p-6 shadow-2xl border border-pink-100 text-center">
             <div class="w-16 h-16 bg-pink-50 text-[#e2136e] rounded-2xl flex items-center justify-center mx-auto mb-3 text-3xl shadow-inner border border-pink-100">
                 <i class="fa-solid fa-shield-heart"></i>
             </div>
@@ -169,28 +176,28 @@
             </div>
 
             <div class="overflow-y-auto space-y-3.5 flex-1 pr-1">
-                <!-- Payment Method Toggle -->
+                <!-- Payment Method Toggle with Real Logos -->
                 <div>
                     <label class="text-[11px] font-bold text-slate-700 block mb-1.5">পেমেন্ট মেথড নির্বাচন করুন</label>
-                    <div class="grid grid-cols-2 gap-2" id="activation-gateways-container">
-                        <!-- Rendered dynamically (bKash & Nagad) -->
+                    <div class="grid grid-cols-2 gap-2.5" id="activation-gateways-container">
+                        <!-- Injected Dynamically with Official Logos -->
                     </div>
                 </div>
 
                 <!-- Admin Payee Number Card with Instant Copy -->
                 <div class="bg-gradient-to-r from-pink-50 to-rose-50 p-3.5 rounded-2xl border border-pink-200">
                     <div class="flex justify-between items-center mb-1">
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide" id="active-method-instruction">বিকাশ পার্সোনাল ক্যাশআউট/সেন্ডমানি</span>
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide" id="active-method-instruction">বিকাশ পার্সোনাল সেন্ড মানি</span>
                         <span class="text-[10px] bg-pink-600 text-white font-bold px-2 py-0.5 rounded-full">ফি: ৳<span class="activation-fee-text">100</span></span>
                     </div>
                     <div class="flex items-center justify-between bg-white p-2.5 rounded-xl border border-pink-200 shadow-xs mt-1">
                         <span class="font-black text-slate-800 text-sm font-inter tracking-wider" id="activation-admin-number">লোড হচ্ছে...</span>
-                        <button onclick="copyAdminNumber()" class="bg-[#e2136e] text-white text-[10px] font-bold px-3 py-1.5 rounded-lg btn-press flex items-center gap-1">
+                        <button onclick="copyAdminNumber()" class="bg-[#e2136e] text-white text-[10px] font-bold px-3 py-1.5 rounded-lg btn-press flex items-center gap-1 shadow">
                             <i class="fa-regular fa-copy"></i> কপি
                         </button>
                     </div>
                     <p class="text-[10px] text-slate-500 mt-2 leading-relaxed">
-                        ⚠️ উপরের নাম্বারে <b class="text-[#e2136e]">৳<span class="activation-fee-text">100</span></b> সেন্ড মানি করুন। এরপর নিচের ফর্মে আপনার নাম্বার ও TrxID লিখে সাবমিট করুন।
+                        ⚠️ উপরের নাম্বারে <b class="text-[#e2136e]">৳<span class="activation-fee-text">100</span></b> সেন্ড মানি করুন। এরপর নিচের ফর্মে প্রেরক নাম্বার ও TrxID দিয়ে সাবমিট করুন।
                     </p>
                 </div>
 
@@ -199,12 +206,12 @@
                     <div>
                         <label class="text-[11px] font-bold text-slate-700 block mb-1">যে নাম্বার থেকে টাকা পাঠিয়েছেন (Sender Number)</label>
                         <input type="tel" id="sender-number-input" placeholder="01XXXXXXXXX" required
-                            class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs font-inter focus:outline-none focus:border-[#e2136e] focus:bg-white font-bold">
+                            class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs font-inter focus:outline-none focus:border-[#e2136e] focus:bg-white font-bold">
                     </div>
                     <div>
-                        <label class="text-[11px] font-bold text-slate-700 block mb-1">ট্রানজেকশন আইডি (Transaction ID / TrxID)</label>
+                        <label class="text-[11px] font-bold text-slate-700 block mb-1">ট্রানজেকশন আইডি (TrxID)</label>
                         <input type="text" id="sender-trx-input" placeholder="যেমন: BL98X710PQ" required
-                            class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs font-mono uppercase focus:outline-none focus:border-[#e2136e] focus:bg-white font-bold">
+                            class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs font-mono uppercase focus:outline-none focus:border-[#e2136e] focus:bg-white font-bold">
                     </div>
 
                     <div id="activation-status-banner" class="hidden p-3 rounded-xl border text-[11px] font-bold"></div>
@@ -391,8 +398,10 @@
                             <span class="text-[10px] text-pink-600 font-bold bg-pink-50 px-2 py-0.5 rounded-full" id="charge-label">সার্ভিস ফি: ১০%</span>
                         </div>
                         
-                        <!-- Real Vector bKash & Nagad Gateways -->
-                        <div id="gateways-grid" class="grid grid-cols-2 gap-2.5"></div>
+                        <!-- Official Brand bKash & Nagad Gateways -->
+                        <div id="gateways-grid" class="grid grid-cols-2 gap-2.5">
+                            <!-- Rendered with Official Logos -->
+                        </div>
                         <input type="hidden" id="selected-payment-method" value="বিকাশ">
                     </div>
 
@@ -516,20 +525,28 @@
         const db = firebase.firestore();
         const tg = window.Telegram?.WebApp;
 
-        // AUTHENTIC VECTOR LOGOS
-        const BKASH_SVG = `<svg class="h-6 w-auto" viewBox="0 0 160 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M42.5 10L15 26.5L34 45L42.5 10Z" fill="#E2136E"/>
-            <path d="M15 26.5L4 20L21 9L15 26.5Z" fill="#C20F5D"/>
-            <path d="M42.5 10L52 2L21 9L42.5 10Z" fill="#E2136E"/>
-            <path d="M34 45L45 52L42.5 10L34 45Z" fill="#9C0A49"/>
-            <text x="58" y="36" font-family="'Inter', sans-serif" font-weight="900" font-size="28" fill="#E2136E">bKash</text>
-        </svg>`;
+        // ==========================================
+        // 100% OFFICIAL REAL LOGOS (BKASH & NAGAD)
+        // ==========================================
+        const BKASH_OFFICIAL_LOGO = `
+            <div class="h-9 w-full flex items-center justify-center px-1">
+                <img src="https://www.logo.wine/a/logo/BKash/BKash-Logo.wine.svg" 
+                     alt="bKash" 
+                     class="h-8 max-h-8 w-auto max-w-[110px] object-contain drop-shadow-xs" 
+                     loading="eager"
+                     onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/BKash-Bangla-Logo-01.png/320px-BKash-Bangla-Logo-01.png';">
+            </div>
+        `;
 
-        const NAGAD_SVG = `<svg class="h-6 w-auto" viewBox="0 0 160 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="28" cy="28" r="21" fill="#F7931E"/>
-            <path d="M28 14C21 14 17 21 21 28C24.5 34 32.5 30 32.5 25C32.5 21 29 19.5 26 21.5" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
-            <text x="58" y="37" font-family="'Hind Siliguri', sans-serif" font-weight="800" font-size="28" fill="#F7931E">নগদ</text>
-        </svg>`;
+        const NAGAD_OFFICIAL_LOGO = `
+            <div class="h-9 w-full flex items-center justify-center px-1">
+                <img src="https://www.logo.wine/a/logo/Nagad/Nagad-Logo.wine.svg" 
+                     alt="নগদ" 
+                     class="h-8 max-h-8 w-auto max-w-[110px] object-contain drop-shadow-xs" 
+                     loading="eager"
+                     onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/bn/thumb/9/97/%E0%A6%A8%E0%A6%97%E0%A6%A6%E0%A7%87%E0%A6%B0_%E0%A6%B2%E0%A7%8B%E0%A6%97%E0%A7%8B.svg/320px-%E0%A6%A8%E0%A6%97%E0%A6%A6%E0%A7%87%E0%A6%B0_%E0%A6%B2%E0%A7%8B%E0%A6%97%E0%A7%8B.svg.png';">
+            </div>
+        `;
 
         // Global Settings
         let appSettings = {
@@ -556,8 +573,8 @@
         let channelVerificationStatus = {};
 
         const activePaymentGateways = [
-            { id: "bkash", name: "বিকাশ", placeholder: "বিকাশ পার্সোনাল নাম্বার", svg: BKASH_SVG, type: "adminBkashNumber" },
-            { id: "nagad", name: "নগদ", placeholder: "নগদ পার্সোনাল নাম্বার", svg: NAGAD_SVG, type: "adminNagadNumber" }
+            { id: "bkash", name: "বিকাশ", placeholder: "বিকাশ পার্সোনাল নাম্বার", logoHtml: BKASH_OFFICIAL_LOGO, type: "adminBkashNumber" },
+            { id: "nagad", name: "নগদ", placeholder: "নগদ পার্সোনাল নাম্বার", logoHtml: NAGAD_OFFICIAL_LOGO, type: "adminNagadNumber" }
         ];
 
         let selectedActivationGateway = "বিকাশ";
@@ -565,7 +582,7 @@
         let currentUser = null;
         let userData = {
             isActivated: false,
-            activationStatus: 'unpaid' // 'unpaid', 'pending', 'approved', 'rejected'
+            activationStatus: 'unpaid'
         };
         
         let isAdWatching = false;
@@ -831,7 +848,6 @@
         }
 
         function onAppUnlocked() {
-            // Check if user is not activated yet, show activation modal
             if (!userData.isActivated && userData.activationStatus !== 'pending') {
                 document.getElementById('activation-reminder-modal').classList.remove('hidden');
             } else {
@@ -1060,18 +1076,18 @@
             if (!container) return;
             container.innerHTML = '';
 
-            activePaymentGateways.forEach((gw, idx) => {
+            activePaymentGateways.forEach((gw) => {
                 const btn = document.createElement('button');
                 btn.type = "button";
-                btn.className = `gateway-card border border-pink-100 rounded-2xl p-2.5 flex items-center justify-center gap-2 bg-white transition ${selectedActivationGateway === gw.name ? 'selected' : ''}`;
+                btn.className = `gateway-card border border-pink-100 rounded-2xl p-2.5 flex flex-col items-center justify-center bg-white ${selectedActivationGateway === gw.name ? 'selected' : ''}`;
                 btn.onclick = () => {
                     selectedActivationGateway = gw.name;
                     renderActivationGateways();
                     updateActivationAdminDetails();
                 };
                 btn.innerHTML = `
-                    <div class="h-6 flex items-center justify-center">${gw.svg}</div>
-                    <span class="text-xs font-bold text-slate-700">${gw.name}</span>
+                    ${gw.logoHtml}
+                    <span class="text-[11px] font-bold text-slate-700 mt-1">${gw.name}</span>
                 `;
                 container.appendChild(btn);
             });
@@ -1167,11 +1183,10 @@
                 updateUserUI(userData);
                 renderActivationStatusBanner();
 
-                showToast("অ্যাক্টিভেশন রিকোয়েস্ট পেন্ডিং রয়েছে! খুব শীঘ্রই যাচাই করা হবে।", "success");
+                showToast("অ্যাক্টিভেশন রিকোয়েস্ট সফলভাবে জমা হয়েছে!", "success");
                 document.getElementById('sender-number-input').value = "";
                 document.getElementById('sender-trx-input').value = "";
 
-                // Send bot notice if available
                 sendBotMessage(currentUser.id, `⚡ <b>অ্যাক্টিভেশন রিকোয়েস্ট জমা হয়েছে!</b>\n\n💳 <b>মেথড:</b> ${selectedActivationGateway}\n📱 <b>নাম্বার:</b> ${senderNum}\n🆔 <b>TrxID:</b> <code>${trxId.toUpperCase()}</code>\n💰 <b>পরিমাণ:</b> ৳ ${fee.toFixed(2)}\n\n<i>অ্যাডমিন যাচাই করার পর আপনার অ্যাকাউন্টটি সক্রিয় হবে।</i>`);
 
                 setTimeout(() => {
@@ -1213,7 +1228,7 @@
             const link = `https://t.me/${BOT_USERNAME}/${BOT_APP_NAME}?startapp=ref_${currentUser.id}`;
             document.getElementById('home-ref-link').innerText = link;
 
-            // Activation Status Elements
+            // Activation Badges
             const headerBadge = document.getElementById('header-status-badge');
             const profileBadge = document.getElementById('profile-activation-badge');
             const homeAlert = document.getElementById('home-activation-alert-banner');
@@ -1382,7 +1397,7 @@
         }
 
         // ==========================================
-        // WITHDRAWAL ENGINE
+        // WITHDRAWAL ENGINE (OFFICIAL LOGOS)
         // ==========================================
         function renderGateways() {
             const grid = document.getElementById('gateways-grid');
@@ -1390,11 +1405,12 @@
 
             activePaymentGateways.forEach((m, idx) => {
                 const btn = document.createElement('button');
-                btn.className = `gateway-card border border-pink-100 rounded-2xl p-3 flex flex-col items-center justify-center gap-1.5 bg-white transition ${idx === 0 ? 'selected' : ''}`;
+                btn.type = "button";
+                btn.className = `gateway-card border border-pink-100 rounded-2xl p-2.5 flex flex-col items-center justify-center bg-white ${idx === 0 ? 'selected' : ''}`;
                 btn.onclick = () => selectGateway(btn, m);
                 btn.innerHTML = `
-                    <div class="h-7 flex items-center justify-center">${m.svg}</div>
-                    <span class="text-[11px] font-bold text-slate-700">${m.name}</span>
+                    ${m.logoHtml}
+                    <span class="text-[11px] font-bold text-slate-700 mt-1">${m.name}</span>
                 `;
                 grid.appendChild(btn);
 
