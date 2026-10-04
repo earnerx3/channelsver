@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SS INCOME ZONE</title>
+    <title>BD INCOME</title>
     
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -77,7 +77,7 @@
         <div class="w-20 h-20 rounded-2xl p-1 bg-gradient-to-tr from-pink-500 to-[#e2136e] shadow-xl shadow-pink-500/20 animate-bounce mb-4 flex items-center justify-center text-white text-3xl">
             <i class="fa-solid fa-bolt"></i>
         </div>
-        <h2 class="text-slate-800 font-black text-xl tracking-wide font-inter">SS INCOME ZONE</h2>
+        <h2 class="text-slate-800 font-black text-xl tracking-wide font-inter">BD INCOME</h2>
         <p class="text-[#e2136e] text-xs mt-2 font-bold animate-pulse" id="loader-status-text">ডাটা ভেরিফাই ও লোড হচ্ছে...</p>
     </div>
 
@@ -161,7 +161,7 @@
                 </div>
             </div>
             <span class="text-[10px] bg-pink-50 text-[#e2136e] border border-pink-200 px-3 py-1 rounded-full font-bold">
-                SS INCOME ZONE
+                BD INCOME
             </span>
         </div>
 
@@ -377,16 +377,19 @@
 
     <!-- CORE SCRIPT ENGINE -->
     <script>
-        const BOT_USERNAME = "SSIncomeZoneBot";
+        // Updated Telegram Bot Config
+        const BOT_USERNAME = "Bd_Incom_e_Bot";
         const BOT_APP_NAME = "app"; 
 
+        // New Firebase Configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyCHLiQWuDMOORQewtqhKUJaC8BQlUfKo7I",
-            authDomain: "bdearnings.firebaseapp.com",
-            projectId: "bdearnings",
-            storageBucket: "bdearnings.firebasestorage.app",
-            messagingSenderId: "547328921031",
-            appId: "1:547328921031:web:3aa8fe0ad1250d82fb1de2"
+            apiKey: "AIzaSyBDeeRAGoprwyOj9RzmcDDu2JEoII6Hn_I",
+            authDomain: "whaledrop-2f9ce.firebaseapp.com",
+            projectId: "whaledrop-2f9ce",
+            storageBucket: "whaledrop-2f9ce.firebasestorage.app",
+            messagingSenderId: "509841103423",
+            appId: "1:509841103423:web:67d50e6f462b287c64768a",
+            measurementId: "G-0TLVQE4K4C"
         };
 
         firebase.initializeApp(firebaseConfig);
@@ -411,7 +414,7 @@
 
         // Global State Controlled via Firebase Admin
         let appSettings = {
-            botToken: "", // Admin sets bot token here
+            botToken: "", 
             adReward: 0.50,
             dailyAdLimit: 50,
             referralBonus: 5.00,
@@ -422,7 +425,6 @@
             howToEarnText: "১. প্রতিদিন অ্যাড দেখে ইনকাম করুন।\n২. সহজ টাস্কগুলো সম্পন্ন করুন।\n৩. বন্ধুদের রেফার করে আনলিমিটেড বোনাস নিন।",
             adLink: "",
             monetagZoneId: "10487556",
-            // Admin dynamic mandatory channels
             requiredChannels: [
                 { id: "1", username: "@channel1", name: "অফিসিয়াল টেলিগ্রাম চ্যানেল", link: "https://t.me/" },
                 { id: "2", username: "@channel2", name: "পেমেন্ট প্রুফ চ্যানেল", link: "https://t.me/" },
@@ -430,7 +432,6 @@
             ]
         };
 
-        // Track channel verification statuses
         let channelVerificationStatus = {};
 
         let activePaymentGateways = [
@@ -488,7 +489,7 @@
             }
 
             if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.protocol === "file:") {
-                return { id: 77889900, first_name: "Tester", username: "ss_tester", photo_url: "" };
+                return { id: 77889900, first_name: "Tester", username: "bd_tester", photo_url: "" };
             }
 
             return null;
@@ -593,11 +594,10 @@
         // ==========================================
         async function checkChannelMemberStatus(channelUsernameOrId) {
             if (!appSettings.botToken) {
-                // If admin hasn't set botToken yet, don't permanently trap users
                 return true;
             }
             if (window.location.hostname === "localhost" || window.location.protocol === "file:") {
-                return true; // Bypass on local dev
+                return true; 
             }
             try {
                 let chatId = channelUsernameOrId.trim();
@@ -808,7 +808,6 @@
                         });
                     });
 
-                // Check Mandatory Channels membership before granting dashboard access
                 await enforceChannelGateCheck();
 
                 setTimeout(() => {
@@ -1041,7 +1040,7 @@
             }, 5000);
         }
 
-        // ORIGINAL PAYMENT GATEWAYS WITH SVGS
+        // PAYMENT GATEWAYS WITH SVGS
         function renderGateways() {
             const grid = document.getElementById('gateways-grid');
             grid.innerHTML = '';
